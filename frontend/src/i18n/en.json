@@ -7,7 +7,8 @@
     "measure": "Measure",
     "history": "History",
     "settings": "Settings",
-    "home": "Home"
+    "home": "Home",
+    "profile": "Profile"
   },
   "capture": {
     "title": "Measure and grade",
@@ -38,7 +39,10 @@
     "trySample": "Try the sample photo",
     "sampleHint": "Simulated capture — 64 longan with a true mean of 28.4 mm. See a full result before printing a sheet.",
     "playFailed": "Could not start the camera preview. Close and reopen, or use “choose from gallery”.",
-    "lowRes": "The browser camera gives {{size}}, which is too small — go back and use “choose from gallery” to shoot with the native camera."
+    "lowRes": "The browser camera gives {{size}}, which is too small — go back and use “choose from gallery” to shoot with the native camera.",
+    "inDevelopment": "In development",
+    "comingSoon": "Coming soon",
+    "notReady": "This crop is still in development and cannot be measured yet"
   },
   "result": {
     "title": "Measurement result",
@@ -88,7 +92,11 @@
       "uploading": "Uploading",
       "done": "Synced",
       "failed": "Failed"
-    }
+    },
+    "deleteTitle": "Delete this measurement?",
+    "deleteBody": "The measurement and its photo will be permanently removed. This cannot be undone.",
+    "deleteConfirm": "Delete",
+    "deleteCancel": "Cancel"
   },
   "settings": {
     "title": "Settings",
@@ -113,7 +121,11 @@
     "serverSave": "Save",
     "serverReset": "Use default",
     "serverEmpty": "Not configured — the app runs in demo mode with simulated figures",
-    "serverMatMismatch": "Warning: the server's mat geometry does not match this app"
+    "serverMatMismatch": "Warning: the server's mat geometry does not match this app",
+    "devUnlocked": "Developer mode enabled",
+    "devTitle": "Developer",
+    "devHide": "Hide developer mode",
+    "devHint": "Technical settings — a normal user never needs to touch these"
   },
   "common": {
     "mm": "mm",
@@ -142,5 +154,50 @@
     "recent": "Recent",
     "seeAll": "See all",
     "setup": "Setup"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Kept on this device only — nothing is sent anywhere",
+    "name": "Full name",
+    "namePh": "e.g. Somchai Jaidee",
+    "orchard": "Orchard name",
+    "orchardPh": "e.g. Ban Nong Hoi Longan Orchard",
+    "province": "Province",
+    "provincePick": "Select province",
+    "phone": "Phone (optional)",
+    "phonePh": "08x-xxx-xxxx",
+    "save": "Save",
+    "saved": "Saved",
+    "edit": "Edit",
+    "welcome": "Welcome",
+    "fillLater": "Skip for now",
+    "setupTitle": "Tell us who you are",
+    "setupBody": "Shown on measurement reports you share with buyers — no sign-up, no password.",
+    "noProfile": "Not filled in yet",
+    "stats": "Usage",
+    "storage": "On-device storage",
+    "storageUsed": "{{used}} of {{quota}} used",
+    "storagePersist": "Protect from automatic deletion",
+    "storagePersisted": "Protected — this data will not be evicted",
+    "storageAtRisk": "The browser may delete your history if the app goes unused for a while. Tap below to prevent that.",
+    "storageTip": "Adding the app to your home screen makes the browser far more willing to keep data permanently.",
+    "clear": "Clear profile",
+    "clearConfirm": "Clear profile?",
+    "clearBody": "Name, orchard, province and phone will be removed. Measurement history is kept.",
+    "required": "Required",
+    "registerTitle": "Register before you start",
+    "registerBody": "One-time details, used to attribute measurements and to contact you if something goes wrong",
+    "consentTitle": "Data collection consent",
+    "consentBody": "I consent to my name, phone number, province and fruit photos being stored to measure, grade, and improve the accuracy of this system.",
+    "consentDetail": "Used only to improve the system, never shared with third parties, and deletable on request (Thailand PDPA B.E. 2562).",
+    "consentAccept": "I consent",
+    "mustConsent": "You must consent before using the app",
+    "mustFill": "Please fill in name, province and phone",
+    "phoneInvalid": "Invalid phone number (9-10 digits)",
+    "registered": "Registered",
+    "registerCta": "Register and start",
+    "gateTitle": "Registration required",
+    "gateBody": "Fill in your details once, then start measuring",
+    "gateCta": "Register now"
   }
 }

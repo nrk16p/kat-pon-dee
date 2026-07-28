@@ -9,6 +9,7 @@ import HomePage from './features/HomePage'
 import CapturePage from './features/CapturePage'
 import ResultPage from './features/ResultPage'
 import HistoryPage from './features/HistoryPage'
+import ProfilePage from './features/ProfilePage'
 import SettingsPage from './features/SettingsPage'
 import { useApp } from './store/app'
 
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: '/capture', element: <CapturePage /> },
       { path: '/result', element: <ResultPage /> },
       { path: '/history', element: <HistoryPage /> },
+      { path: '/profile', element: <ProfilePage /> },
       { path: '/settings', element: <SettingsPage /> },
     ],
   },

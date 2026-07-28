@@ -22,7 +22,7 @@ from .schemas import (
     FruitMeasurement,
     MeasurementResult,
 )
-from .storage import save_capture, save_failed
+from .storage import Grower, save_capture, save_failed
 from .vision.markers import MarkerError
 from .vision.mats import MATS, get_mat
 from .vision.pipeline import measure_image
@@ -79,6 +79,11 @@ async def measure(
     matId: str = Form("full"),
     baselineMm: float | None = Form(None),
     locale: str = Form("th"),
+    growerName: str = Form(""),
+    growerPhone: str = Form(""),
+    province: str = Form(""),
+    orchard: str = Form(""),
+    consentAt: str = Form(""),
 ) -> MeasurementResult:
     lc = normalise_locale(locale)
 
@@ -130,7 +135,18 @@ async def measure(
         raise fail(500, "PIPELINE_FAILED", err=str(e)[:120]) from e
 
     # keep the original for retraining — the segmentation model needs real sheets
-    save_capture(raw, fruitId, matId)
+    save_capture(
+        raw,
+        fruitId,
+        matId,
+        Grower(
+            name=growerName,
+            phone=growerPhone,
+            province=province,
+            orchard=orchard,
+            consent_at=consentAt,
+        ),
+    )
 
     # colour summary over the fruit whose outline was fully visible
     lit = [f.color for f in res.fruits if f.color and not f.occluded]

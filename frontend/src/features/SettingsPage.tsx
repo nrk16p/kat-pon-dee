@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { AlertTriangle, Download } from 'lucide-react'
 import { clsx } from 'clsx'
 import { GradeBadge, Notice, Section, useT } from '@/components/ui'
-import { ENABLED_FRUITS, getFruit } from '@/domain/fruits'
+import { LISTED_FRUITS, getFruit } from '@/domain/fruits'
 import { MAT_LIST } from '@/domain/mats'
 import ServerSetting from '@/components/ServerSetting'
 import { useApp } from '@/store/app'
@@ -13,6 +14,23 @@ export default function SettingsPage() {
   const { t, tx, i18n } = useT()
   const { locale, fruitId, matId, setLocale, setFruit, setMat } = useApp()
   const fruit = getFruit(fruitId)
+
+  // The measurement server lives behind a tunnel whose URL changes whenever the
+  // machine restarts, so the field has to stay reachable — but it is a technical
+  // detail a grower should never be shown. Hidden behind the long-standing
+  // "tap the version number" gesture, and remembered once unlocked.
+  const [taps, setTaps] = useState(0)
+  const [dev, setDev] = useState(() => localStorage.getItem('kpd-dev') === '1')
+
+  function tapVersion() {
+    const n = taps + 1
+    setTaps(n)
+    if (n >= 7) {
+      localStorage.setItem('kpd-dev', '1')
+      setDev(true)
+      setTaps(0)
+    }
+  }
 
   function changeLocale(l: Locale) {
     setLocale(l)
@@ -41,31 +59,38 @@ export default function SettingsPage() {
         </div>
       </Section>
 
-      <Section title={t('settings.server')}>
-        <ServerSetting />
-      </Section>
-
       <Section title={t('settings.defaultFruit')}>
         <div className="card divide-y divide-hair overflow-hidden">
-          {ENABLED_FRUITS.map((f) => (
+          {LISTED_FRUITS.map((f) => (
             <button
               key={f.id}
+              disabled={f.status === 'development'}
               onClick={() => setFruit(f.id)}
-              className="press flex w-full items-center gap-3 px-4 py-3.5 text-left"
+              className={clsx(
+                'flex w-full items-center gap-3 px-4 py-3.5 text-left',
+                f.status === 'development' ? 'opacity-55' : 'press',
+              )}
             >
               <span className="text-[18px]">{f.emoji}</span>
               <span className="flex-1">
                 <span className="block text-[15px] font-semibold">{tx(f.name)}</span>
                 <span className="block text-[12px] text-muted italic">{f.scientific}</span>
-              </span>
-              <span
-                className={clsx(
-                  'grid h-6 w-6 place-items-center rounded-full border-2',
-                  f.id === fruitId ? 'border-accent bg-accent' : 'border-hair',
+                {f.status === 'development' && (
+                  <span className="mt-1 inline-block rounded-full bg-warn/12 px-2 py-0.5 text-[11px] font-semibold text-warn">
+                    {t('capture.inDevelopment')}
+                  </span>
                 )}
-              >
-                {f.id === fruitId && <span className="h-2 w-2 rounded-full bg-white" />}
               </span>
+              {f.status !== 'development' && (
+                <span
+                  className={clsx(
+                    'grid h-6 w-6 shrink-0 place-items-center rounded-full border-2',
+                    f.id === fruitId ? 'border-accent bg-accent' : 'border-hair',
+                  )}
+                >
+                  {f.id === fruitId && <span className="h-2 w-2 rounded-full bg-white" />}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -140,10 +165,35 @@ export default function SettingsPage() {
         <div className="card num p-4 text-[13px]">
           <div className="flex justify-between">
             <span className="text-muted">{t('settings.version')}</span>
-            <span>{APP_VERSION}</span>
+            <button onClick={tapVersion} className="select-none tabular-nums">
+              {APP_VERSION}
+            </button>
           </div>
         </div>
+        {!dev && taps >= 4 && taps < 7 && (
+          <p className="num mt-2 text-center text-[12px] text-muted">
+            {7 - taps}
+          </p>
+        )}
       </Section>
+
+      {dev && (
+        <Section title={t('settings.devTitle')}>
+          <p className="mb-3 px-1 text-[12px] leading-relaxed text-muted">
+            {t('settings.devHint')}
+          </p>
+          <ServerSetting />
+          <button
+            onClick={() => {
+              localStorage.removeItem('kpd-dev')
+              setDev(false)
+            }}
+            className="press mt-3 w-full py-2 text-[13px] font-semibold text-muted"
+          >
+            {t('settings.devHide')}
+          </button>
+        </Section>
+      )}
     </div>
   )
 }

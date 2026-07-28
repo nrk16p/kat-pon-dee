@@ -30,7 +30,7 @@ export const FRUITS: FruitProfile[] = [
     metric: 'diameter',
     size: { min: 15, max: 40, typical: 28.4 },
     recommendedMat: 'full',
-    enabled: true,
+    status: 'available',
     grading: {
       id: 'longan-th-size',
       label: { th: 'เกรดตามขนาดผล', en: 'Size grade' },
@@ -56,8 +56,10 @@ export const FRUITS: FruitProfile[] = [
     // major axis and the UI labels it as length, not diameter.
     metric: 'length',
     size: { min: 60, max: 200, typical: 118 },
+    // not validated yet: an elongated fruit needs its own segmentation and a
+    // length-to-weight relationship that has not been established
     recommendedMat: 'full',
-    enabled: true,
+    status: 'development',
     grading: {
       id: 'mango-th-size',
       label: { th: 'เกรดตามความยาวผล', en: 'Length grade' },
@@ -77,8 +79,11 @@ export const FRUITS: FruitProfile[] = [
 
 export const FRUIT_BY_ID = new Map(FRUITS.map((f) => [f.id, f]))
 
-export const ENABLED_FRUITS = FRUITS.filter((f) => f.enabled)
+export const ENABLED_FRUITS = FRUITS.filter((f) => f.status === 'available')
+
+/** Everything shown in the picker, including what is not selectable yet. */
+export const LISTED_FRUITS = FRUITS
 
 export function getFruit(id: string): FruitProfile {
-  return FRUIT_BY_ID.get(id) ?? FRUITS[0]
+  return FRUIT_BY_ID.get(id) ?? ENABLED_FRUITS[0]
 }

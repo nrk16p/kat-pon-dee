@@ -13,7 +13,7 @@ import {
 import { clsx } from 'clsx'
 import { Button, Notice, useT } from '@/components/ui'
 import MatGuide from '@/components/MatGuide'
-import { ENABLED_FRUITS, getFruit } from '@/domain/fruits'
+import { LISTED_FRUITS, getFruit } from '@/domain/fruits'
 import { MATS, MAT_LIST, matCapacity } from '@/domain/mats'
 import { useApp } from '@/store/app'
 import { measure } from '@/lib/api'
@@ -273,16 +273,21 @@ export default function CapturePage() {
           <p className="mt-1.5 text-[15px] text-muted">{t('capture.chooseFruitHint')}</p>
 
           <div className="mt-5 space-y-3">
-            {ENABLED_FRUITS.map((f) => (
+            {LISTED_FRUITS.map((f) => {
+              const soon = f.status === 'development'
+              return (
               <button
                 key={f.id}
+                disabled={soon}
                 onClick={() => {
+                  if (soon) return
                   setFruit(f.id)
                   setPhase('mat')
                 }}
                 className={clsx(
-                  'press card flex w-full items-center gap-4 p-4 text-left',
-                  f.id === fruitId && 'ring-2 ring-accent',
+                  'card flex w-full items-center gap-4 p-4 text-left',
+                  soon ? 'opacity-55' : 'press',
+                  !soon && f.id === fruitId && 'ring-2 ring-accent',
                 )}
               >
                 <span
@@ -293,18 +298,25 @@ export default function CapturePage() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[19px] font-bold">{tx(f.name)}</span>
-                  <span className="num block text-[13px] text-muted">
-                    {t(f.metric === 'length' ? 'result.length' : 'result.diameter')} ~
-                    {f.size.typical} {t('common.mm')}
-                  </span>
+                  {soon ? (
+                    <span className="mt-1 inline-block rounded-full bg-warn/12 px-2.5 py-0.5 text-[12px] font-semibold text-warn">
+                      {t('capture.inDevelopment')}
+                    </span>
+                  ) : (
+                    <span className="num block text-[13px] text-muted">
+                      {t(f.metric === 'length' ? 'result.length' : 'result.diameter')} ~
+                      {f.size.typical} {t('common.mm')}
+                    </span>
+                  )}
                 </span>
-                {f.id === fruitId && (
+                {!soon && f.id === fruitId && (
                   <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
                     <Check size={16} strokeWidth={3} />
                   </span>
                 )}
               </button>
-            ))}
+              )
+            })}
           </div>
         </>
       )}

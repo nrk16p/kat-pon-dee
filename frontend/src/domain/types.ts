@@ -57,6 +57,11 @@ export interface GradeScheme {
  *  labelled "diameter" in the UI. */
 export type SizeMetric = 'diameter' | 'length'
 
+/** Where a crop is in its rollout. `development` still appears in the picker so
+ *  growers can see what is coming, but cannot be selected — the pipeline has not
+ *  been validated for it, and a number it cannot stand behind is worse than none. */
+export type FruitStatus = 'available' | 'development'
+
 export interface FruitProfile {
   id: string
   name: I18nText
@@ -69,7 +74,7 @@ export interface FruitProfile {
   /** which printed sheet suits this fruit's size */
   recommendedMat: MatVariantId
   grading: GradeScheme
-  enabled: boolean
+  status: FruitStatus
 }
 
 /* ----------------------------------------------------------- measurement -- */

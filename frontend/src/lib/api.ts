@@ -7,6 +7,7 @@ import type {
 import { gradeOf, isPlausible, mean, stdev, tallyGrades } from '@/domain/grade'
 import i18n from '@/i18n'
 import { getApiUrl } from './endpoint'
+import { useProfile } from '@/domain/profile'
 
 
 export class ApiError extends Error {
@@ -41,6 +42,17 @@ export async function measure(
   fd.append('baselineMm', String(mat.baseline))
   // the server localises its errors and warnings to this
   fd.append('locale', i18n.language?.startsWith('en') ? 'en' : 'th')
+
+  // Attribute the capture to a grower. Sent only because they consented — the
+  // registration screen will not complete without an explicit PDPA opt-in.
+  const p = useProfile.getState()
+  if (p.consent) {
+    fd.append('growerName', p.name)
+    fd.append('growerPhone', p.phone)
+    fd.append('province', p.province)
+    if (p.orchard) fd.append('orchard', p.orchard)
+    fd.append('consentAt', String(p.consentAt ?? ''))
+  }
 
   const res = await fetch(`${base}/api/measure`, { method: 'POST', body: fd, signal })
   if (!res.ok) {

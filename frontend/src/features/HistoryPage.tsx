@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Trash2 } from 'lucide-react'
 import { clsx } from 'clsx'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import { Notice, Section, useT } from '@/components/ui'
 import { db, deleteCapture } from '@/lib/db'
 import { getFruit } from '@/domain/fruits'
@@ -20,6 +22,7 @@ export default function HistoryPage() {
     () => db.captures.orderBy('createdAt').reverse().limit(100).toArray(),
     [],
   )
+  const [pendingDelete, setPendingDelete] = useState<number | null>(null)
   const pending = items?.filter((c) => c.status === 'queued' || c.status === 'failed').length ?? 0
 
   const fmt = new Intl.DateTimeFormat(locale === 'th' ? 'th-TH' : 'en-GB', {
@@ -43,6 +46,18 @@ export default function HistoryPage() {
           <p className="mt-1 text-[14px] text-muted">{t('history.emptyHint')}</p>
         </div>
       )}
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title={t('history.deleteTitle')}
+        body={t('history.deleteBody')}
+        confirmLabel={t('history.deleteConfirm')}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete !== null) void deleteCapture(pendingDelete)
+          setPendingDelete(null)
+        }}
+      />
 
       {items && items.length > 0 && (
         <Section title={t('history.title')}>
@@ -81,7 +96,7 @@ export default function HistoryPage() {
                     {t(`history.status.${c.status}`)}
                   </span>
                   <button
-                    onClick={() => c.id && deleteCapture(c.id)}
+                    onClick={() => c.id && setPendingDelete(c.id)}
                     aria-label={t('history.delete')}
                     className="press shrink-0 p-2 text-muted"
                   >

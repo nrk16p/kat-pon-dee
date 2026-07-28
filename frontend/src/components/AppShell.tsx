@@ -1,9 +1,10 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Camera, History, Home, Settings, WifiOff } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useEffect, useState } from 'react'
 import { useT } from './ui'
 import { isMock } from '@/lib/api'
+import { isRegistered, useProfile } from '@/domain/profile'
 
 const TABS = [
   { to: '/home', icon: Home, key: 'tab.home' },
@@ -14,6 +15,17 @@ const TABS = [
 
 export default function AppShell() {
   const { t } = useT()
+  const profile = useProfile()
+  const loc = useLocation()
+
+  // Measuring writes a record attributed to a grower, so registration has to
+  // happen first. Profile and settings stay reachable — locking someone out of
+  // the screen that unblocks them would be a dead end.
+  const open = ['/profile', '/settings']
+  if (!isRegistered(profile) && !open.includes(loc.pathname)) {
+    return <Navigate to="/profile" replace />
+  }
+
   const [online, setOnline] = useState(navigator.onLine)
 
   useEffect(() => {

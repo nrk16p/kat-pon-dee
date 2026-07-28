@@ -1,16 +1,18 @@
 import { useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Camera, ChevronRight, Printer } from 'lucide-react'
-import { Notice, Section, Stat, useT } from '@/components/ui'
+import { Camera, ChevronRight, UserRound } from 'lucide-react'
+import { Section, Stat, useT } from '@/components/ui'
 import { db } from '@/lib/db'
 import { getFruit } from '@/domain/fruits'
 import { MATS } from '@/domain/mats'
+import { initials, hasProfile, useProfile } from '@/domain/profile'
 import { useApp } from '@/store/app'
 
 export default function HomePage() {
   const { t, tx, locale } = useT()
   const nav = useNavigate()
   const { fruitId, matId } = useApp()
+  const profile = useProfile()
   const fruit = getFruit(fruitId)
   const mat = MATS[matId]
 
@@ -31,10 +33,43 @@ export default function HomePage() {
 
   return (
     <div className="px-5 pt-5 pb-8">
-      <p className="text-[13px] font-semibold tracking-[0.1em] text-accent uppercase">
-        {t('app.name')}
-      </p>
-      <h1 className="mt-1 text-[26px] font-bold tracking-tight">{t('home.title')}</h1>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[13px] font-semibold tracking-[0.1em] text-accent uppercase">
+            {t('app.name')}
+          </p>
+          <h1 className="mt-1 truncate text-[26px] font-bold tracking-tight">
+            {profile.name || profile.orchard || t('home.title')}
+          </h1>
+        </div>
+        <button
+          onClick={() => nav('/profile')}
+          aria-label={t('profile.title')}
+          className="press grid h-12 w-12 shrink-0 place-items-center rounded-full bg-accent-soft text-[15px] font-bold text-accent-ink"
+        >
+          {hasProfile(profile) ? initials(profile) : <UserRound size={22} />}
+        </button>
+      </div>
+
+      {!profile.onboarded && (
+        <button
+          onClick={() => nav('/profile')}
+          className="press card mt-4 flex w-full items-center gap-3 p-4 text-left"
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent-soft text-accent-ink">
+            <UserRound size={20} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-semibold">
+              {t('profile.setupTitle')}
+            </span>
+            <span className="block text-[12px] leading-snug text-muted">
+              {t('profile.setupBody')}
+            </span>
+          </span>
+          <ChevronRight size={20} className="shrink-0 text-muted" />
+        </button>
+      )}
 
       <button
         onClick={() => nav('/capture')}
@@ -109,14 +144,6 @@ export default function HomePage() {
         )}
       </Section>
 
-      <Section title={t('home.setup')}>
-        <Notice>
-          <span className="flex gap-2">
-            <Printer size={16} className="mt-0.5 shrink-0" />
-            {t('settings.matPrintWarning')}
-          </span>
-        </Notice>
-      </Section>
     </div>
   )
 }
