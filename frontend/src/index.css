@@ -1,0 +1,94 @@
+/* Self-hosted so the app keeps its typography with no signal. IBM Plex Sans
+   Thai carries Thai well at small sizes; JetBrains Mono is used for every
+   numeral so measurements stay tabular and scannable. */
+@import './fonts.css';
+@import 'tailwindcss';
+
+@theme {
+  --color-canvas: #fafaf9;
+  --color-surface: #ffffff;
+  --color-panel: #f4f4f2;
+  --color-ink: #0f1512;
+  --color-muted: #6b7280;
+  --color-hair: #e3e3df;
+
+  --color-accent: #16a34a;
+  --color-accent-ink: #15803d;
+  --color-accent-soft: #dcfce7;
+
+  --color-warn: #d97706;
+  --color-danger: #dc2626;
+
+  --font-sans: 'IBM Plex Sans Thai', 'Inter', -apple-system, BlinkMacSystemFont,
+    'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --radius-card: 18px;
+}
+
+:root {
+  color-scheme: light;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --tabbar-h: 64px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  /* Thai runs have no spaces, so an unbroken phrase sets the container's
+     min-content width and shoves the layout wider than the screen. `anywhere`
+     is the one value that also lowers min-content, so flex/grid children can
+     actually shrink. Without this the whole app scrolls sideways on a phone. */
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-break: normal;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* a measuring tool should never rubber-band under the user's thumb */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* every number in this app is tabular */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 1px 2px rgb(15 21 18 / 0.05),
+    0 8px 24px rgb(15 21 18 / 0.05);
+}
+
+.press {
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

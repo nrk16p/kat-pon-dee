@@ -1,0 +1,69 @@
+"""Wire contract. Mirrors src/domain/types.ts in the frontend.
+
+The server returns raw geometry only. Grading happens on the client so a farmer
+can re-grade a stored capture against a buyer's thresholds without re-uploading
+the photo — which also keeps grade policy out of the deploy cycle.
+"""
+from __future__ import annotations
+
+from pydantic import BaseModel, Field
+
+
+class FruitColor(BaseModel):
+    """Skin colour in CIE L*a*b*, AFTER correction against the printed strip."""
+
+    L: float = Field(description="lightness, 0 black .. 100 white")
+    a: float = Field(description="green -> red")
+    b: float = Field(description="blue -> yellow")
+    chroma: float
+    hue: float = Field(description="hue angle, degrees")
+    uniformity: float = Field(
+        description="spread of L* across the skin; blemishes and spotting raise it"
+    )
+
+
+class FruitMeasurement(BaseModel):
+    i: int
+    x: float = Field(description="centre in mat millimetres")
+    y: float
+    d: float = Field(description="diameter, or major axis for elongated fruit, mm")
+    confidence: float
+    occluded: bool
+    grade: str | None = Field(default=None, description="always null — client grades")
+    color: FruitColor | None = None
+
+
+class MeasurementResult(BaseModel):
+    fruitId: str
+    matId: str
+    counted: int
+    measured: int
+    meanDiameter: float
+    minDiameter: float
+    maxDiameter: float
+    stdDiameter: float
+    scale: float = Field(description="mm per pixel of the rectified sheet")
+    cameraHeight: float | None
+    heightCorrected: bool
+    markersFound: int
+    processingMs: int
+    fruits: list[FruitMeasurement]
+    tally: list[dict] = Field(default_factory=list, description="filled client-side")
+
+    # colour summary across the measurable fruit
+    colorCalibrated: bool = False
+    colorNote: str | None = None
+    meanL: float | None = None
+    meanChroma: float | None = None
+    meanUniformity: float | None = None
+
+    # diagnostics — surfaced so a bad capture is debuggable in the field
+    intrinsicsSource: str | None = None
+    reprojectionErrorPx: float | None = None
+    sharpness: float | None = None
+    warnings: list[str] = Field(default_factory=list)
+
+
+class ErrorResponse(BaseModel):
+    detail: str
+    hint: str | None = None

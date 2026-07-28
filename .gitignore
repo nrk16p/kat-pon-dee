@@ -1,0 +1,25 @@
+# python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/data/            # captures & failed frames — never commit fruit photos
+backend/synthetic.jpg
+
+# node
+node_modules/
+frontend/dist/
+frontend/dev-dist/
+.vite/
+
+# env — the tunnel URL is not a secret, but keep local overrides out
+.env
+.env.local
+!frontend/.env.example
+
+# os / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+frontend/.git.bak-scaffold/
