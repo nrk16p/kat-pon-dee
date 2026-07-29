@@ -199,6 +199,10 @@
     "gateTitle": "Registration required",
     "gateBody": "Fill in your details once, then start measuring",
     "gateCta": "Register now",
-    "privacyLink": "Read the privacy policy"
+    "privacyLink": "Read the privacy policy",
+    "lineConnected": "Connected with LINE",
+    "lineLogin": "Sign in with LINE",
+    "lineHint": "Sign in with LINE and skip typing your name and phone",
+    "phoneOptional": "Phone (optional — you are signed in with LINE)"
   }
 }

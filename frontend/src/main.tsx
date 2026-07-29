@@ -14,6 +14,8 @@ import PrivacyPage from './features/PrivacyPage'
 import ProfilePage from './features/ProfilePage'
 import SettingsPage from './features/SettingsPage'
 import { useApp } from './store/app'
+import { getLineProfile, initLiff } from './lib/liff'
+import { useProfile } from './domain/profile'
 
 /** First run shows the landing page; after that "/" goes straight to Home so a
  *  farmer opening the app in the field is one tap from the camera. */
@@ -40,6 +42,21 @@ const router = createBrowserRouter([
   },
   { path: '*', element: <Navigate to="/home" replace /> },
 ])
+
+// Pull the LINE identity before the first render when we have one: the
+// registration screen can then arrive pre-filled instead of asking a farmer to
+// type their own name into a phone.
+void initLiff().then(async (ok) => {
+  if (!ok) return
+  const line = await getLineProfile()
+  if (!line) return
+  const p = useProfile.getState()
+  p.set({
+    lineUserId: line.userId,
+    linePicture: line.pictureUrl ?? '',
+    name: p.name || line.displayName,
+  })
+})
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

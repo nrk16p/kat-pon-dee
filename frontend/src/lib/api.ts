@@ -52,6 +52,7 @@ export async function measure(
     fd.append('province', p.province)
     if (p.orchard) fd.append('orchard', p.orchard)
     fd.append('consentAt', String(p.consentAt ?? ''))
+    if (p.lineUserId) fd.append('lineUserId', p.lineUserId)
   }
 
   const res = await fetch(`${base}/api/measure`, { method: 'POST', body: fd, signal })

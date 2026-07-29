@@ -24,6 +24,10 @@ export interface Profile {
    *  recorded consent rather than an assumption. */
   consent: boolean
   consentAt: number | null
+  /** LINE userId — a far better identity than a phone number when we have it:
+   *  stable, unique, and it costs the grower no typing. */
+  lineUserId: string
+  linePicture: string
 }
 
 interface ProfileState extends Profile {
@@ -39,6 +43,8 @@ const EMPTY: Profile = {
   onboarded: false,
   consent: false,
   consentAt: null,
+  lineUserId: '',
+  linePicture: '',
 }
 
 export const useProfile = create<ProfileState>()(
@@ -70,9 +76,14 @@ export function validPhone(raw: string): boolean {
   return d.length >= 9 && d.length <= 10
 }
 
-/** Registration is complete only with consent AND the identifying fields. */
+/** Registration is complete only with consent AND a way to identify the grower.
+ *
+ *  Signed in with LINE, the userId already identifies them, so a phone number is
+ *  optional — demanding one anyway would throw away the whole benefit of the
+ *  LINE login. Outside LINE we still need the phone as the identity. */
 export function isRegistered(p: Profile): boolean {
-  return !!(p.consent && p.name.trim() && p.province && validPhone(p.phone))
+  if (!p.consent || !p.name.trim() || !p.province) return false
+  return p.lineUserId ? true : validPhone(p.phone)
 }
 
 export const PROVINCES = [

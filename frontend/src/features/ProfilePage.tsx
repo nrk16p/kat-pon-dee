@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Check, ChevronLeft, HardDrive, ShieldCheck, Trash2 } from 'lucide-react'
+import { Check, ChevronLeft, HardDrive, MessageCircle, ShieldCheck, Trash2 } from 'lucide-react'
 import { Button, Notice, Section, Stat, useT } from '@/components/ui'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import {
@@ -12,6 +12,12 @@ import {
   validPhone,
 } from '@/domain/profile'
 import { db } from '@/lib/db'
+import {
+  isInLineApp,
+  isLineLoggedIn,
+  liffConfigured,
+  lineLogin,
+} from '@/lib/liff'
 import {
   formatBytes,
   getStorageInfo,
@@ -75,11 +81,18 @@ export default function ProfilePage() {
   }, [])
 
   const registered = isRegistered(p)
+  const linked = !!p.lineUserId
+  // Only offer the LINE button where it can actually help: configured, and
+  // either already signed in or in a browser where the redirect can complete.
+  const canOfferLine = liffConfigured() && !linked && !isInLineApp() && !isLineLoggedIn()
 
   function save() {
     if (!consent) return setError(t('profile.mustConsent'))
     if (!draft.name.trim() || !draft.province) return setError(t('profile.mustFill'))
-    if (!validPhone(draft.phone)) return setError(t('profile.phoneInvalid'))
+    // signed in with LINE, the userId is the identity — a phone is a bonus
+    if (!linked && !validPhone(draft.phone)) return setError(t('profile.phoneInvalid'))
+    if (linked && draft.phone && !validPhone(draft.phone))
+      return setError(t('profile.phoneInvalid'))
     setError(null)
     p.set({
       ...draft,
@@ -111,9 +124,17 @@ export default function ProfilePage() {
       )}
 
       <div className="flex items-center gap-4">
-        <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-accent-soft text-[22px] font-bold text-accent-ink">
-          {initials(draft)}
-        </span>
+        {p.linePicture ? (
+          <img
+            src={p.linePicture}
+            alt=""
+            className="h-16 w-16 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-accent-soft text-[22px] font-bold text-accent-ink">
+            {initials(draft)}
+          </span>
+        )}
         <div className="min-w-0">
           <h1 className="truncate text-[24px] font-bold tracking-tight">
             {draft.name || draft.orchard || t('profile.title')}
@@ -123,6 +144,27 @@ export default function ProfilePage() {
           </p>
         </div>
       </div>
+
+      {linked && (
+        <div className="mt-5 flex items-center gap-2.5 rounded-2xl bg-accent-soft px-4 py-3 text-[14px] font-semibold text-accent-ink">
+          <MessageCircle size={17} className="shrink-0" />
+          {t('profile.lineConnected')}
+        </div>
+      )}
+
+      {canOfferLine && (
+        <div className="mt-5">
+          <button
+            onClick={lineLogin}
+            className="press flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#06C755] px-5 text-[16px] font-semibold text-white"
+          >
+            <MessageCircle size={19} /> {t('profile.lineLogin')}
+          </button>
+          <p className="mt-2 px-1 text-center text-[12px] text-muted">
+            {t('profile.lineHint')}
+          </p>
+        </div>
+      )}
 
       <div className="card mt-6 space-y-4 p-5">
         <Field
@@ -155,7 +197,11 @@ export default function ProfilePage() {
           </select>
         </label>
         <Field
-          label={`${t('profile.phone').replace(' (ไม่บังคับ)', '').replace(' (optional)', '')} *`}
+          label={
+            linked
+              ? t('profile.phoneOptional')
+              : `${t('profile.phone').replace(' (ไม่บังคับ)', '').replace(' (optional)', '')} *`
+          }
           value={draft.phone}
           placeholder={t('profile.phonePh')}
           type="tel"

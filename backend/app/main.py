@@ -84,6 +84,7 @@ async def measure(
     province: str = Form(""),
     orchard: str = Form(""),
     consentAt: str = Form(""),
+    lineUserId: str = Form(""),
 ) -> MeasurementResult:
     lc = normalise_locale(locale)
 
@@ -145,6 +146,7 @@ async def measure(
             province=province,
             orchard=orchard,
             consent_at=consentAt,
+            line_user_id=lineUserId,
         ),
     )
 

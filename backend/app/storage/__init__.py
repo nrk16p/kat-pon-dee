@@ -32,19 +32,25 @@ class Grower:
     province: str = ""
     orchard: str = ""
     consent_at: str = ""
+    line_user_id: str = ""
 
     @property
     def consented(self) -> bool:
-        return bool(self.consent_at and (self.name or self.phone))
+        return bool(self.consent_at and (self.name or self.phone or self.line_user_id))
 
     @property
     def id(self) -> str:
-        """Stable pseudonymous id from the phone number.
+        """Stable pseudonymous id for this grower.
 
-        The roster is keyed by this rather than the raw number so a lookup does
-        not require reading anyone's phone number, and two devices belonging to
-        the same grower still resolve to one person.
+        Prefers the LINE userId: it is already unique and stable, and it survives
+        a change of phone number. Falls back to the phone for growers who signed
+        up in a plain browser.
+
+        Either way it is hashed, so grouping and lookup never require reading
+        someone's LINE id or phone number back out.
         """
+        if self.line_user_id:
+            return hashlib.sha256(f"kpd:line:{self.line_user_id}".encode()).hexdigest()[:16]
         digits = "".join(c for c in self.phone if c.isdigit())
         if not digits:
             return ""
