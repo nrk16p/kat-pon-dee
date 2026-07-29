@@ -17,15 +17,6 @@ export default function AppShell() {
   const { t } = useT()
   const profile = useProfile()
   const loc = useLocation()
-
-  // Measuring writes a record attributed to a grower, so registration has to
-  // happen first. Profile and settings stay reachable — locking someone out of
-  // the screen that unblocks them would be a dead end.
-  const open = ['/profile', '/settings']
-  if (!isRegistered(profile) && !open.includes(loc.pathname)) {
-    return <Navigate to="/profile" replace />
-  }
-
   const [online, setOnline] = useState(navigator.onLine)
 
   useEffect(() => {
@@ -38,6 +29,18 @@ export default function AppShell() {
       window.removeEventListener('offline', off)
     }
   }, [])
+
+  // Measuring writes a record attributed to a grower, so registration comes
+  // first. Profile and settings stay reachable — locking someone out of the
+  // screen that unblocks them would be a dead end.
+  //
+  // This redirect MUST come after every hook. Returning early above the
+  // useState/useEffect changed the hook count between renders, which crashed
+  // the app for every unregistered visitor — i.e. everyone opening it new.
+  const alwaysOpen = ['/profile', '/settings']
+  if (!isRegistered(profile) && !alwaysOpen.includes(loc.pathname)) {
+    return <Navigate to="/profile" replace />
+  }
 
   return (
     <div className="flex h-full flex-col overflow-x-hidden">

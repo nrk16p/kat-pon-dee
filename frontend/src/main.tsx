@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import './index.css'
 import './i18n'
 import AppShell from './components/AppShell'
+import ErrorScreen from './components/ErrorScreen'
 import LandingPage from './features/LandingPage'
 import HomePage from './features/HomePage'
 import CapturePage from './features/CapturePage'
@@ -21,10 +22,11 @@ function Entry() {
 }
 
 const router = createBrowserRouter([
-  { path: '/', element: <Entry /> },
+  { path: '/', element: <Entry />, errorElement: <ErrorScreen /> },
   { path: '/welcome', element: <LandingPage /> },
   {
     element: <AppShell />,
+    errorElement: <ErrorScreen />,
     children: [
       { path: '/home', element: <HomePage /> },
       { path: '/capture', element: <CapturePage /> },
