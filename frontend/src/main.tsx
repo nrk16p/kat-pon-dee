@@ -10,6 +10,7 @@ import HomePage from './features/HomePage'
 import CapturePage from './features/CapturePage'
 import ResultPage from './features/ResultPage'
 import HistoryPage from './features/HistoryPage'
+import PrivacyPage from './features/PrivacyPage'
 import ProfilePage from './features/ProfilePage'
 import SettingsPage from './features/SettingsPage'
 import { useApp } from './store/app'
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       { path: '/result', element: <ResultPage /> },
       { path: '/history', element: <HistoryPage /> },
       { path: '/profile', element: <ProfilePage /> },
+      { path: '/privacy', element: <PrivacyPage /> },
       { path: '/settings', element: <SettingsPage /> },
     ],
   },

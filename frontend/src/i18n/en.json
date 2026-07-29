@@ -198,6 +198,7 @@
     "registerCta": "Register and start",
     "gateTitle": "Registration required",
     "gateBody": "Fill in your details once, then start measuring",
-    "gateCta": "Register now"
+    "gateCta": "Register now",
+    "privacyLink": "Read the privacy policy"
   }
 }

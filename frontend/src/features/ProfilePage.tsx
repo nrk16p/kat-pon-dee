@@ -168,7 +168,13 @@ export default function ProfilePage() {
           </p>
           <p className="mt-2 text-[13px] leading-relaxed">{t('profile.consentBody')}</p>
           <p className="mt-2 text-[12px] leading-relaxed text-muted">
-            {t('profile.consentDetail')}
+            {t('profile.consentDetail')}{' '}
+            <button
+              onClick={() => nav('/privacy')}
+              className="font-semibold text-accent underline"
+            >
+              {t('profile.privacyLink')}
+            </button>
           </p>
           <label className="mt-3 flex items-start gap-3">
             <input
