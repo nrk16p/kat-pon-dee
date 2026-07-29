@@ -82,7 +82,14 @@
     "overlay": "What was detected",
     "overlayAlt": "Your photo with each detected fruit circled",
     "overlayUnavailable": "Could not render the detection overlay",
-    "overlayHint": "Coloured circles are measured fruit, the number is millimetres. Grey dashed circles touch a neighbour — counted, not measured."
+    "overlayHint": "Coloured circles are measured fruit, the number is millimetres. Grey dashed circles touch a neighbour — counted, not measured.",
+    "shade": "Skin shade",
+    "shadeDominant": "Dominant shade in this lot",
+    "shadeScale": "Shade scale",
+    "shadeCount": "{{n}} fruit",
+    "shadeProvisional": "Shade names describe how light or dark the skin is. There is no data yet on which shade is worth more.",
+    "shadeUncal": "Colour strip unreadable — these shades are not comparable across photos",
+    "shadeNone": "No fruit had a colour reading"
   },
   "history": {
     "title": "Measurement history",

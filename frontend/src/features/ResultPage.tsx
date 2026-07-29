@@ -8,6 +8,8 @@ import { MATS } from '@/domain/mats'
 import { ruleById } from '@/domain/grade'
 import { labToCss, skinFlag, summariseSkin } from '@/domain/skin'
 import DetectionOverlay from '@/components/DetectionOverlay'
+import ShadePanel from '@/components/ShadePanel'
+import { fruitShade } from '@/domain/shade'
 import { useApp } from '@/store/app'
 import { addCapture } from '@/lib/db'
 
@@ -149,6 +151,8 @@ export default function ResultPage() {
             </div>
           </Section>
 
+          <ShadePanel result={result} fruit={fruit} />
+
           {skin && (
             <Section title={t('result.skin')}>
               <div className="card p-5">
@@ -208,6 +212,7 @@ export default function ResultPage() {
                       <span
                         className="h-5 w-5 shrink-0 rounded-full ring-1 ring-black/10"
                         style={{ background: labToCss(f.color.L, f.color.a, f.color.b) }}
+                        title={tx(fruitShade(f, fruit)?.label ?? { th: '', en: '' })}
                       />
                     )}
                     <span className="num flex-1 text-[15px] font-medium">
