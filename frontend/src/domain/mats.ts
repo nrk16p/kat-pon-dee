@@ -8,6 +8,7 @@ import type { MatVariant, MatVariantId } from './types'
 export const MATS: Record<MatVariantId, MatVariant> = {
   full: {
     id: 'full',
+    pdf: '/mats/calibration-mat-500x500mm.pdf',
     label: { th: 'แผ่นมาตรฐาน 500 มม.', en: 'Production 500 mm' },
     sheet: '500 × 500 mm',
     mat: 500,
@@ -17,6 +18,7 @@ export const MATS: Record<MatVariantId, MatVariant> = {
   },
   a3: {
     id: 'a3',
+    pdf: '/mats/calibration-mat-a3.pdf',
     label: { th: 'แผ่นทดลอง A3', en: 'A3 prototype' },
     sheet: 'A3 · 297 × 420 mm',
     mat: 280,
@@ -26,6 +28,7 @@ export const MATS: Record<MatVariantId, MatVariant> = {
   },
   a4: {
     id: 'a4',
+    pdf: '/mats/calibration-mat-a4.pdf',
     label: { th: 'แผ่นทดลอง A4', en: 'A4 prototype' },
     sheet: 'A4 · 210 × 297 mm',
     mat: 190,

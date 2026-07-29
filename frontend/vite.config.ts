@@ -42,7 +42,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // the mat PDF is the one file a farmer needs BEFORE they have signal,
+        // so it is precached rather than fetched on demand
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2,pdf}'],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallbackDenylist: [/^\/api\//],
       },
       devOptions: { enabled: false },

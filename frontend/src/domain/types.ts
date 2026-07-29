@@ -27,6 +27,9 @@ export interface MatVariant {
   baseline: number
   /** measurement area side, mm */
   area: number
+  /** print-ready PDF, served by the app itself — no external host, and cached
+   *  by the service worker so it downloads with no signal */
+  pdf: string
 }
 
 /* ---------------------------------------------------------------- grading -- */

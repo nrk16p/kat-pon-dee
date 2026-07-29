@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, Download } from 'lucide-react'
+import { AlertTriangle, Download, FileDown } from 'lucide-react'
 import { clsx } from 'clsx'
 import { GradeBadge, Notice, Section, useT } from '@/components/ui'
 import { LISTED_FRUITS, getFruit } from '@/domain/fruits'
@@ -139,6 +139,14 @@ export default function SettingsPage() {
                 <span className="num block text-[12px] text-muted">
                   {m.sheet} · baseline {m.baseline.toFixed(1)} mm · area {m.area} mm
                 </span>
+                <a
+                  href={m.pdf}
+                  download
+                  onClick={(e) => e.stopPropagation()}
+                  className="press mt-1.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-accent"
+                >
+                  <FileDown size={15} /> {t('settings.matDownload')}
+                </a>
               </span>
               <span
                 className={clsx(
