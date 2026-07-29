@@ -25,7 +25,28 @@ from .schemas import (
     GrowerOut,
     MeasurementResult,
 )
-from .storage import Grower, grower_exists, record_grower, save_capture, save_failed
+from pathlib import Path
+
+from .storage import (
+    CAPTURE_DIR,
+    GROWERS_FILE,
+    RETAIN,
+    Grower,
+    grower_exists,
+    record_grower,
+    save_capture,
+    save_failed,
+)
+
+
+def _count_growers() -> int:
+    try:
+        if not GROWERS_FILE.exists():
+            return 0
+        with GROWERS_FILE.open(encoding="utf-8") as fh:
+            return sum(1 for ln in fh if ln.strip())
+    except Exception:
+        return -1
 from .vision.markers import MarkerError
 from .vision.mats import MATS, get_mat
 from .vision.pipeline import measure_image
@@ -54,12 +75,45 @@ app.add_middleware(
 )
 
 
+def _writable(path: Path) -> bool:
+    """Can we actually persist here, right now?"""
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        probe = path / ".write-probe"
+        probe.write_text("ok")
+        probe.unlink()
+        return True
+    except Exception:
+        return False
+
+
 @app.get("/api/health")
 def health() -> dict:
+    """Includes storage state on purpose.
+
+    Retention is best-effort by design — a failed write must never break a
+    measurement someone is waiting on. But that means a missing or unmounted
+    disk loses every capture and every grower record in total silence, which is
+    exactly the failure that costs you the training set. Surfacing it here makes
+    it something you can see and monitor instead of discover months later.
+    """
+    captures_ok = _writable(CAPTURE_DIR)
+    growers_ok = _writable(GROWERS_FILE.parent)
     return {
         "ok": True,
         "opencv": cv2.__version__,
         "mats": {k: {"mat": v.mat, "baseline": v.baseline} for k, v in MATS.items()},
+        "storage": {
+            "retain": RETAIN,
+            "captureDir": str(CAPTURE_DIR),
+            "capturesWritable": captures_ok,
+            "growersFile": str(GROWERS_FILE),
+            "growersWritable": growers_ok,
+            "growersRecorded": _count_growers(),
+            # if this is false while retain is on, photos and grower records are
+            # being dropped on the floor
+            "persisting": bool(RETAIN and captures_ok and growers_ok),
+        },
     }
 
 

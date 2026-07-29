@@ -67,3 +67,14 @@ def test_measure_takes_only_the_id_now():
     assert "growerId" in params
     for leaked in ("growerName", "growerPhone", "consentAt", "lineUserId"):
         assert leaked not in params, f"{leaked} still sent with every capture"
+
+
+def test_health_reports_whether_data_is_actually_persisting():
+    """Retention is best-effort, so a broken disk fails silently by design.
+    Health has to make that visible or the training set disappears unnoticed."""
+    s = client.get("/api/health").json()["storage"]
+    for key in ("retain", "capturesWritable", "growersWritable", "persisting"):
+        assert key in s, f"health is missing {key}"
+    assert s["persisting"] == (
+        s["retain"] and s["capturesWritable"] and s["growersWritable"]
+    )
