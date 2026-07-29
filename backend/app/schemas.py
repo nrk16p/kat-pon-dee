@@ -61,6 +61,10 @@ class MeasurementResult(BaseModel):
     intrinsicsSource: str | None = None
     reprojectionErrorPx: float | None = None
     sharpness: float | None = None
+    homography: list[float] | None = Field(
+        default=None,
+        description="3x3 row-major, mat mm -> pixels in the uploaded image",
+    )
     warnings: list[str] = Field(default_factory=list)
 
 

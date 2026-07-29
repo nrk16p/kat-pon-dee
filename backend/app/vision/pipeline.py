@@ -61,6 +61,10 @@ class PipelineResult:
     intrinsics_source: str | None
     reprojection_error_px: float | None
     sharpness: float
+    # 3x3 homography, row-major: mat millimetres -> pixels in the ORIGINAL photo.
+    # Lets the client draw the detections back onto the farmer's own picture
+    # instead of the server shipping a second image for it.
+    homography: list[float]
     processing_ms: int
     fruits: list[FruitResult] = field(default_factory=list)
     warnings: list[tuple[str, dict]] = field(default_factory=list)
@@ -189,6 +193,7 @@ def measure_image(
             else None
         ),
         sharpness=fix.sharpness,
+        homography=[round(float(v), 8) for v in fix.homography.ravel()],
         processing_ms=int((time.perf_counter() - t0) * 1000),
         fruits=fruits,
         warnings=warnings,

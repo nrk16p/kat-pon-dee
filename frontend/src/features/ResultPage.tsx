@@ -7,6 +7,7 @@ import { getFruit } from '@/domain/fruits'
 import { MATS } from '@/domain/mats'
 import { ruleById } from '@/domain/grade'
 import { labToCss, skinFlag, summariseSkin } from '@/domain/skin'
+import DetectionOverlay from '@/components/DetectionOverlay'
 import { useApp } from '@/store/app'
 import { addCapture } from '@/lib/db'
 
@@ -81,6 +82,13 @@ export default function ResultPage() {
         </div>
       ) : (
         <>
+          <Section title={t('result.overlay')}>
+            <DetectionOverlay image={image} result={result} fruit={fruit} />
+            <p className="mt-2 px-1 text-[12px] leading-relaxed text-muted">
+              {t('result.overlayHint')}
+            </p>
+          </Section>
+
           <div className="card mt-5 grid grid-cols-2 gap-x-4 gap-y-6 p-5">
             <Stat label={t('result.counted')} value={result.counted} unit={t('common.fruitUnit')} />
             <Stat

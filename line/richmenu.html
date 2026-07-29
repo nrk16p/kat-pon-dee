@@ -1,65 +1,74 @@
 <meta charset="utf-8">
 <style>
-  @font-face{font-family:'Plex';src:url('../frontend/public/fonts/IBMPlexSansThai-600-thai.woff2') format('woff2');font-weight:600}
-  @font-face{font-family:'Plex';src:url('../frontend/public/fonts/IBMPlexSansThai-600-latin.woff2') format('woff2');font-weight:600}
+  @font-face{font-family:'Plex';src:url('../frontend/public/fonts/IBMPlexSansThai-700-thai.woff2') format('woff2');font-weight:700}
+  @font-face{font-family:'Plex';src:url('../frontend/public/fonts/IBMPlexSansThai-700-latin.woff2') format('woff2');font-weight:700}
   @font-face{font-family:'Plex';src:url('../frontend/public/fonts/IBMPlexSansThai-500-thai.woff2') format('woff2');font-weight:500}
+  @font-face{font-family:'Plex';src:url('../frontend/public/fonts/IBMPlexSansThai-500-latin.woff2') format('woff2');font-weight:500}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{width:2500px;height:1686px;font-family:'Plex',sans-serif;background:#FAFAF9;overflow:hidden}
-  .hero{height:843px;background:#16A34A;display:flex;align-items:center;justify-content:center;gap:64px;position:relative}
+  body{width:2500px;height:1686px;font-family:'Plex',sans-serif;background:#fff;overflow:hidden}
+
+  /* Hero takes 60% of the height. It is the only thing most people will ever
+     tap, so it gets the room — and it is readable at arm's length in sunlight. */
+  .hero{height:1010px;background:#16A34A;display:flex;align-items:center;
+        justify-content:center;gap:80px;position:relative}
   .hero::after{content:'';position:absolute;inset:0;
-    background:radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.16),transparent 60%)}
-  .hero .ic{width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.18);
-    display:grid;place-items:center;flex:0 0 auto}
-  .hero h1{font-size:132px;font-weight:600;color:#fff;letter-spacing:-.02em;line-height:1}
-  .hero p{font-size:46px;font-weight:500;color:rgba(255,255,255,.85);margin-top:16px}
-  .row{height:843px;display:grid;grid-template-columns:833px 834px 833px}
-  .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;
-    background:#fff;border-right:3px solid #E3E3DF}
+    background:radial-gradient(130% 100% at 18% 0%,rgba(255,255,255,.18),transparent 62%)}
+  .hero .ic{width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,.20);
+            display:grid;place-items:center;flex:0 0 auto}
+  .hero h1{font-size:150px;font-weight:700;color:#fff;letter-spacing:-.025em;line-height:1}
+  .hero p{font-size:56px;font-weight:500;color:rgba(255,255,255,.9);margin-top:26px}
+
+  .row{height:676px;display:grid;grid-template-columns:833px 834px 833px}
+  .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:36px;background:#fff;border-right:4px solid #E3E3DF}
   .cell:last-child{border-right:0}
-  .cell .ic{width:150px;height:150px;border-radius:50%;background:#DCFCE7;display:grid;place-items:center}
-  .cell span{font-size:62px;font-weight:600;color:#0F1512;text-align:center;line-height:1.25}
+  .cell .ic{width:168px;height:168px;border-radius:50%;background:#DCFCE7;
+            display:grid;place-items:center}
+  .cell span{font-size:76px;font-weight:700;color:#0F1512;text-align:center;line-height:1.18}
   svg{display:block}
 </style>
+
 <div class="hero">
   <div class="ic">
-    <svg width="104" height="104" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7"
-      stroke-linecap="round" stroke-linejoin="round">
+    <svg width="132" height="132" viewBox="0 0 24 24" fill="none" stroke="#fff"
+      stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
       <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/>
       <circle cx="12" cy="13" r="3.5"/>
     </svg>
   </div>
   <div>
-    <h1>วัดผลใหม่</h1>
-    <p>ถ่ายภาพผลไม้บนแผ่นสอบเทียบ</p>
+    <h1>เริ่มใช้งาน</h1>
+    <p>AI คัดผลดี · วัดขนาดและคัดเกรดลำไย</p>
   </div>
 </div>
+
 <div class="row">
   <div class="cell">
     <div class="ic">
-      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="1.8"
-        stroke-linecap="round" stroke-linejoin="round">
+      <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="#15803D"
+        stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3.5 2"/>
       </svg>
     </div>
-    <span>ประวัติการวัด</span>
+    <span>ประวัติ</span>
   </div>
   <div class="cell">
     <div class="ic">
-      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="1.8"
-        stroke-linecap="round" stroke-linejoin="round">
+      <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="#15803D"
+        stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/>
       </svg>
     </div>
-    <span>ดาวน์โหลด<br>แผ่นสอบเทียบ</span>
+    <span>โหลดแผ่น</span>
   </div>
   <div class="cell">
     <div class="ic">
-      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="1.8"
-        stroke-linecap="round" stroke-linejoin="round">
+      <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="#15803D"
+        stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="9"/>
         <path d="M9.2 9.2a3 3 0 0 1 5.6 1.3c0 2-3 2.5-3 4"/><path d="M12 17.5h.01"/>
       </svg>
     </div>
-    <span>วิธีใช้งาน</span>
+    <span>วิธีใช้</span>
   </div>
 </div>

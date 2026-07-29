@@ -78,7 +78,11 @@
     "skinMottled": "Mottled skin",
     "skinEven": "Normal",
     "skinRelative": "Compared within this photo only — there is no established standard mapping colour to a quality class yet.",
-    "skinUncal": "Colour strip could not be read; values are raw camera readings and are not comparable across photos."
+    "skinUncal": "Colour strip could not be read; values are raw camera readings and are not comparable across photos.",
+    "overlay": "What was detected",
+    "overlayAlt": "Your photo with each detected fruit circled",
+    "overlayUnavailable": "Could not render the detection overlay",
+    "overlayHint": "Coloured circles are measured fruit, the number is millimetres. Grey dashed circles touch a neighbour — counted, not measured."
   },
   "history": {
     "title": "Measurement history",

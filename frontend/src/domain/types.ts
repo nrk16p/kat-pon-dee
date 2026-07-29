@@ -145,6 +145,10 @@ export interface MeasurementResult {
   meanChroma?: number | null
   meanUniformity?: number | null
 
+  /** 3x3 row-major, mat mm -> pixels in the uploaded photo. Lets the client
+   *  draw detections back onto the farmer's own image. */
+  homography?: number[] | null
+  sharpness?: number | null
   intrinsicsSource?: string | null
   reprojectionErrorPx?: number | null
   warnings?: string[]

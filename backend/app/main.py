@@ -263,5 +263,6 @@ async def measure(
         intrinsicsSource=res.intrinsics_source,
         reprojectionErrorPx=res.reprojection_error_px,
         sharpness=res.sharpness,
+        homography=res.homography,
         warnings=[msg(code, lc, **kw) for code, kw in res.warnings],
     )
