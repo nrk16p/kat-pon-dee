@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import math
+import os
 import time
 from dataclasses import dataclass, field
 
@@ -24,7 +25,12 @@ from .markers import MarkerError, detect, measure_sharpness, rectify
 from .optics import Intrinsics, intrinsics_from_exif, solve_true_diameter
 from .segment import Detection, SegmentParams, segment
 
-RECT_PX_PER_MM = 8.0
+# Rectified sheet resolution. Drives both accuracy and peak memory:
+#   8 px/mm -> 482 MB peak, bias -0.05 mm
+#   5 px/mm -> 339 MB peak, bias -0.17 mm
+# 8 is the default because the accuracy is the point; drop it only to fit a
+# small instance, and know what it costs.
+RECT_PX_PER_MM = float(os.getenv("RECT_PX_PER_MM", "8.0"))
 
 
 @dataclass

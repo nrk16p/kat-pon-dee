@@ -95,16 +95,31 @@ is stable, pin it:
 CORS_ORIGINS=https://your-app.vercel.app .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-### Why not Render yet
+### Render (paid) — the recommended target
 
-Measured on a real capture: **peak ~540 MB, 3–4.5 s per photo.** Render's free
-instance has **512 MB**, so it would OOM, and it sleeps after 15 minutes — a
-farmer's first photo of the day would wait ~50 s for a cold start. Running on the
-laptop sidesteps both while the pipeline is still changing.
+`backend/render.yaml` is a ready blueprint. Dashboard → New → Blueprint → this repo.
 
-When you do move it, you need: a paid instance ≥1 GB, and object storage for
-`backend/data/` — Render's disk is ephemeral, so captures would be **destroyed on
-every deploy**, taking the training set with them.
+Measured on a 12 MP capture of the 500 mm sheet:
+
+| px/mm | peak memory | bias | time |
+|---|---|---|---|
+| **8.0** (default) | **482 MB** | −0.05 mm | 1.8 s |
+| 5.0 | 339 MB | −0.17 mm | 0.76 s |
+
+| Plan | RAM | Verdict |
+|---|---|---|
+| Free | 512 MB | ❌ 482 MB leaves no headroom, sleeps after 15 min (~50 s cold start), and the disk is wiped |
+| Starter $7 | 512 MB | ⚠️ needs `RECT_PX_PER_MM=5`, and half a CPU makes it 2–3× slower than measured |
+| **Standard $25** | **2 GB** | ✅ full 8 px/mm accuracy with room to spare |
+
+**The 10 GB disk (~$2.50/mo) is not optional.** Render wipes the container
+filesystem on every deploy. Without it, every orchard photo — the training set for
+the segmentation model that has to replace the watershed baseline — is destroyed
+each time you ship, silently.
+
+Concurrency is capped at one CV job (`MAX_CONCURRENT_JOBS`): two 0.5 GB captures
+at once would OOM any small instance, and a request that waits beats a container
+that dies.
 
 ### Quick tunnel vs named tunnel
 

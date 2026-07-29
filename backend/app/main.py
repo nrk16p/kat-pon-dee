@@ -4,6 +4,7 @@
 """
 from __future__ import annotations
 
+import asyncio
 import io
 import logging
 import os
@@ -31,6 +32,12 @@ from .vision.segment import SegmentParams
 log = logging.getLogger("kpd")
 
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
+
+# One capture peaks near 0.5 GB. Two at once would double that and OOM a small
+# instance, so the CV stage is serialised rather than left to chance — a request
+# that waits is far better than a container that dies.
+MAX_CONCURRENT = int(os.getenv("MAX_CONCURRENT_JOBS", "1"))
+_cv_slot = asyncio.Semaphore(MAX_CONCURRENT)
 # a phone photo is 12 MP+; downscaling below this loses marker corner accuracy
 MIN_LONG_SIDE = 1600
 
@@ -128,7 +135,12 @@ async def measure(
     )
 
     try:
-        res = measure_image(bgr, mat, params, equiv35mm=_equiv35mm(raw))
+        async with _cv_slot:
+            # off the event loop: OpenCV holds the GIL for seconds at a time and
+            # would otherwise stall health checks and every other request
+            res = await asyncio.to_thread(
+                measure_image, bgr, mat, params, _equiv35mm(raw)
+            )
     except MarkerError as e:
         raise fail(422, e.code, **e.params) from e
     except Exception as e:  # noqa: BLE001

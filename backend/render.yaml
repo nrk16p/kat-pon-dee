@@ -1,0 +1,44 @@
+# Render blueprint — https://render.com/docs/blueprint-spec
+#
+# Deploy: Render dashboard → New → Blueprint → point at this repo.
+# Root directory must be `backend`.
+services:
+  - type: web
+    name: kat-pon-dee-api
+    runtime: python
+    region: singapore          # closest region to Thailand
+    plan: standard             # 2 GB RAM. See the note below before downgrading.
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /api/health
+
+    # Captures are the training set for the segmentation model that has to
+    # replace the watershed baseline. Render's container filesystem is WIPED ON
+    # EVERY DEPLOY, so without this disk the dataset is destroyed each time you
+    # ship — silently, and unrecoverably.
+    disk:
+      name: captures
+      mountPath: /data
+      sizeGB: 10
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: '3.12.7'
+      - key: CAPTURE_DIR
+        value: /data/captures
+      - key: FAILED_DIR
+        value: /data/failed
+      - key: GROWERS_FILE
+        value: /data/growers.jsonl
+      - key: RETAIN_CAPTURES
+        value: '1'
+      # One capture peaks near 0.5 GB; two at once would OOM anything small.
+      - key: MAX_CONCURRENT_JOBS
+        value: '1'
+      # 8 px/mm: peak 482 MB, bias -0.05 mm.  Drop to 5 for a 512 MB instance
+      # (peak 339 MB) and accept -0.17 mm.
+      - key: RECT_PX_PER_MM
+        value: '8.0'
+      - key: CORS_ORIGINS
+        sync: false            # set to the Vercel URL in the dashboard
