@@ -4,7 +4,7 @@ import { useT } from '@/components/ui'
 
 /** ⚠️ Change this to the address that will actually answer a deletion request.
  *  Under PDPA a stated contact that nobody monitors is worse than none. */
-const CONTACT_EMAIL = 'psompong.biz@gmail.com'
+const CONTACT_EMAIL = 'hardman16p@gmail.com'
 const UPDATED = '2026-07-29'
 
 const TH = [

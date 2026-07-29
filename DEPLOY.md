@@ -22,19 +22,17 @@ AI Smart Fruit Grading/
 
 ```bash
 cd "AI Smart Fruit Grading"
-git init -b main
-git add -A
-git commit -m "AI คัดผลดี — measurement platform"
-gh repo create ai-smart-fruit-grading --private --source=. --push
+git remote -v          # https://github.com/nrk16p/kat-pon-dee.git
+git push origin main
 ```
 
-> ⚠️ **Vercel Hobby only deploys commits authored by `psompong.biz@gmail.com`.**
-> This bit you on Kontrax-Mo. Set it *before* the first commit:
-> ```bash
-> git config user.email "psompong.biz@gmail.com"
-> git config user.name "psompong"
-> ```
-> A commit authored by any other address builds and then silently refuses to deploy.
+Repo: **https://github.com/nrk16p/kat-pon-dee** — one repo, frontend and backend
+together (see above for why).
+
+> **On the Vercel author-email rule.** Kontrax-Mo runs on a Hobby account that only
+> deploys commits authored by one specific address. **That restriction does not
+> apply to this project** — deploys from this repo are building and shipping
+> normally. Do not copy that workaround here unless a deploy actually stalls.
 
 Work on `dev`, merge to `main` to release — same as Kontrax-Mo.
 
@@ -140,7 +138,6 @@ is not there.
 
 ## Checklist
 
-- [ ] `git config user.email psompong.biz@gmail.com` **before** the first commit
 - [ ] Vercel Root Directory = `frontend`
 - [ ] Backend running, tunnel up, URL pasted into ตั้งค่า, connection test green
 - [ ] `backend/data/` not in git
