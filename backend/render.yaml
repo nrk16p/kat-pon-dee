@@ -9,7 +9,7 @@ services:
     region: singapore          # closest region to Thailand
     plan: standard             # 2 GB RAM. See the note below before downgrading.
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    startCommand: ./start.sh
     healthCheckPath: /api/health
 
     # Captures are the training set for the segmentation model that has to
