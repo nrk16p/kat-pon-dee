@@ -43,17 +43,11 @@ export async function measure(
   // the server localises its errors and warnings to this
   fd.append('locale', i18n.language?.startsWith('en') ? 'en' : 'th')
 
-  // Attribute the capture to a grower. Sent only because they consented — the
-  // registration screen will not complete without an explicit PDPA opt-in.
+  // Only the pseudonymous id. Name and phone were sent once at registration;
+  // repeating them with every photo would put personal data on the wire dozens
+  // of times a day for no benefit.
   const p = useProfile.getState()
-  if (p.consent) {
-    fd.append('growerName', p.name)
-    fd.append('growerPhone', p.phone)
-    fd.append('province', p.province)
-    if (p.orchard) fd.append('orchard', p.orchard)
-    fd.append('consentAt', String(p.consentAt ?? ''))
-    if (p.lineUserId) fd.append('lineUserId', p.lineUserId)
-  }
+  if (p.growerId) fd.append('growerId', p.growerId)
 
   const res = await fetch(`${base}/api/measure`, { method: 'POST', body: fd, signal })
   if (!res.ok) {
@@ -70,6 +64,47 @@ export async function measure(
   }
   const raw = (await res.json()) as MeasurementResult
   return applyGrades(raw, fruit)
+}
+
+export interface RegisterResult {
+  growerId: string
+  isNew: boolean
+}
+
+/** Register the grower once and get back a pseudonymous id.
+ *  Throws so the caller can keep the user on the form and show why. */
+export async function registerGrower(body: {
+  name: string
+  phone: string
+  province: string
+  orchard: string
+  lineUserId: string
+  consentAt: number
+}): Promise<RegisterResult> {
+  const base = getApiUrl()
+  if (!base) {
+    // demo mode: no server to register against, so mint a local id and carry on
+    return { growerId: `local-${crypto.randomUUID().slice(0, 12)}`, isNew: true }
+  }
+  const res = await fetch(
+    `${base}/api/grower?locale=${i18n.language?.startsWith('en') ? 'en' : 'th'}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...body, consentAt: String(body.consentAt) }),
+    },
+  )
+  if (!res.ok) {
+    let detail = `register failed (${res.status})`
+    try {
+      const b = await res.json()
+      if (typeof b?.detail === 'string') detail = b.detail
+    } catch {
+      /* keep the status line */
+    }
+    throw new ApiError(detail, res.status)
+  }
+  return (await res.json()) as RegisterResult
 }
 
 /** Re-derive grades from raw diameters — lets a scheme change re-grade history. */

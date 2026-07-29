@@ -28,6 +28,9 @@ export interface Profile {
    *  stable, unique, and it costs the grower no typing. */
   lineUserId: string
   linePicture: string
+  /** pseudonymous id issued by the server at registration; the only thing sent
+   *  with a capture from then on */
+  growerId: string
 }
 
 interface ProfileState extends Profile {
@@ -45,6 +48,7 @@ const EMPTY: Profile = {
   consentAt: null,
   lineUserId: '',
   linePicture: '',
+  growerId: '',
 }
 
 export const useProfile = create<ProfileState>()(

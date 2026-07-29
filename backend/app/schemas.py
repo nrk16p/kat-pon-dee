@@ -64,6 +64,25 @@ class MeasurementResult(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class GrowerIn(BaseModel):
+    """Registration payload. Sent ONCE, not with every photo."""
+
+    name: str = ""
+    phone: str = ""
+    province: str = ""
+    orchard: str = ""
+    lineUserId: str = ""
+    consentAt: str = Field(
+        default="",
+        description="client timestamp of the PDPA opt-in; without it nothing is stored",
+    )
+
+
+class GrowerOut(BaseModel):
+    growerId: str = Field(description="pseudonymous id — safe to store on the device")
+    isNew: bool
+
+
 class ErrorResponse(BaseModel):
     detail: str
     hint: str | None = None

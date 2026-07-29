@@ -61,7 +61,11 @@ GROWERS_FILE = Path(os.getenv("GROWERS_FILE", "data/growers.jsonl"))
 
 
 def save_capture(
-    raw: bytes, fruit_id: str, mat_id: str, grower: "Grower | None" = None
+    raw: bytes,
+    fruit_id: str,
+    mat_id: str,
+    grower: "Grower | None" = None,
+    grower_id: str = "",
 ) -> Path | None:
     if not RETAIN:
         return None
@@ -79,8 +83,9 @@ def save_capture(
             "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
             "fruit_id": fruit_id,
             "mat_id": mat_id,
-            "grower_id": grower.id if grower and grower.consented else None,
-            "province": grower.province if grower and grower.consented else None,
+            # only the pseudonymous id: the roster already holds the rest, and a
+            # sidecar next to every photo is the last place personal data belongs
+            "grower_id": grower_id or (grower.id if grower and grower.consented else None),
         }
         (d / f"{stem}.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1))
 
@@ -91,6 +96,18 @@ def save_capture(
         # retention must never fail a measurement the farmer is waiting on
         log.warning("could not persist capture", exc_info=True)
         return None
+
+
+def grower_exists(grower_id: str) -> bool:
+    """Is this grower already on the roster?"""
+    if not grower_id or not GROWERS_FILE.exists():
+        return False
+    try:
+        with GROWERS_FILE.open(encoding="utf-8") as fh:
+            return any(f'"id": "{grower_id}"' in ln or f'"id":"{grower_id}"' in ln
+                       for ln in fh)
+    except Exception:
+        return False
 
 
 def record_grower(grower: "Grower") -> None:
@@ -105,11 +122,8 @@ def record_grower(grower: "Grower") -> None:
     try:
         GROWERS_FILE.parent.mkdir(parents=True, exist_ok=True)
         gid = grower.id
-        if GROWERS_FILE.exists():
-            with GROWERS_FILE.open(encoding="utf-8") as fh:
-                for line in fh:
-                    if f'"id": "{gid}"' in line or f'"id":"{gid}"' in line:
-                        return
+        if grower_exists(gid):
+            return
         row = {"id": gid, "first_seen": time.strftime("%Y-%m-%dT%H:%M:%S%z"), **asdict(grower)}
         with GROWERS_FILE.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")

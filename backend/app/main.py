@@ -21,9 +21,11 @@ from .schemas import (
     ErrorResponse,
     FruitColor,
     FruitMeasurement,
+    GrowerIn,
+    GrowerOut,
     MeasurementResult,
 )
-from .storage import Grower, save_capture, save_failed
+from .storage import Grower, grower_exists, record_grower, save_capture, save_failed
 from .vision.markers import MarkerError
 from .vision.mats import MATS, get_mat
 from .vision.pipeline import measure_image
@@ -75,6 +77,34 @@ def _equiv35mm(raw: bytes) -> float | None:
         return None
 
 
+@app.post("/api/grower", response_model=GrowerOut, responses={422: {"model": ErrorResponse}})
+def register_grower(body: GrowerIn, locale: str = "th") -> GrowerOut:
+    """Register a grower once and hand back their pseudonymous id.
+
+    Separated from /api/measure so a name and phone number travel over the wire
+    exactly once, instead of riding along with every photo for the rest of time.
+    After this the client sends only `growerId`.
+    """
+    lc = normalise_locale(locale)
+    g = Grower(
+        name=body.name,
+        phone=body.phone,
+        province=body.province,
+        orchard=body.orchard,
+        consent_at=body.consentAt,
+        line_user_id=body.lineUserId,
+    )
+    if not g.consent_at:
+        raise HTTPException(422, msg("NO_CONSENT", lc))
+    if not g.id:
+        raise HTTPException(422, msg("NO_IDENTITY", lc))
+
+    existed = grower_exists(g.id)
+    record_grower(g)
+    log.info("grower %s %s", g.id, "returning" if existed else "registered")
+    return GrowerOut(growerId=g.id, isNew=not existed)
+
+
 @app.post(
     "/api/measure",
     response_model=MeasurementResult,
@@ -86,12 +116,7 @@ async def measure(
     matId: str = Form("full"),
     baselineMm: float | None = Form(None),
     locale: str = Form("th"),
-    growerName: str = Form(""),
-    growerPhone: str = Form(""),
-    province: str = Form(""),
-    orchard: str = Form(""),
-    consentAt: str = Form(""),
-    lineUserId: str = Form(""),
+    growerId: str = Form(""),
 ) -> MeasurementResult:
     lc = normalise_locale(locale)
 
@@ -148,19 +173,7 @@ async def measure(
         raise fail(500, "PIPELINE_FAILED", err=str(e)[:120]) from e
 
     # keep the original for retraining — the segmentation model needs real sheets
-    save_capture(
-        raw,
-        fruitId,
-        matId,
-        Grower(
-            name=growerName,
-            phone=growerPhone,
-            province=province,
-            orchard=orchard,
-            consent_at=consentAt,
-            line_user_id=lineUserId,
-        ),
-    )
+    save_capture(raw, fruitId, matId, grower_id=growerId)
 
     # colour summary over the fruit whose outline was fully visible
     lit = [f.color for f in res.fruits if f.color and not f.occluded]

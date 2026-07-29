@@ -37,9 +37,9 @@ export default function AppShell() {
   // This redirect MUST come after every hook. Returning early above the
   // useState/useEffect changed the hook count between renders, which crashed
   // the app for every unregistered visitor — i.e. everyone opening it new.
-  const alwaysOpen = ['/profile', '/settings', '/privacy']
-  if (!isRegistered(profile) && !alwaysOpen.includes(loc.pathname)) {
-    return <Navigate to="/profile" replace />
+  const alwaysOpen = ['/register', '/privacy']
+  if ((!isRegistered(profile) || !profile.growerId) && !alwaysOpen.includes(loc.pathname)) {
+    return <Navigate to="/register" replace />
   }
 
   return (

@@ -12,6 +12,7 @@ import ResultPage from './features/ResultPage'
 import HistoryPage from './features/HistoryPage'
 import PrivacyPage from './features/PrivacyPage'
 import ProfilePage from './features/ProfilePage'
+import RegisterPage from './features/RegisterPage'
 import SettingsPage from './features/SettingsPage'
 import { useApp } from './store/app'
 import { getLineProfile, initLiff } from './lib/liff'
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
       { path: '/capture', element: <CapturePage /> },
       { path: '/result', element: <ResultPage /> },
       { path: '/history', element: <HistoryPage /> },
+      { path: '/register', element: <RegisterPage /> },
       { path: '/profile', element: <ProfilePage /> },
       { path: '/privacy', element: <PrivacyPage /> },
       { path: '/settings', element: <SettingsPage /> },

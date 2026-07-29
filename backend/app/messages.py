@@ -52,6 +52,15 @@ MESSAGES: dict[str, dict[str, str]] = {
             "sheet is {server} mm"
         ),
     },
+    # ---------------------------------------------------------- grower ------
+    "NO_CONSENT": {
+        TH: "ยังไม่ได้ให้ความยินยอม จึงไม่สามารถบันทึกข้อมูลได้",
+        EN: "no consent recorded — nothing can be stored",
+    },
+    "NO_IDENTITY": {
+        TH: "ต้องมีเบอร์โทรหรือบัญชี LINE อย่างน้อยหนึ่งอย่าง",
+        EN: "need either a phone number or a LINE account",
+    },
     # --------------------------------------------------------- markers ------
     "NO_MARKERS": {
         TH: (

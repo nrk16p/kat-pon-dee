@@ -7,7 +7,6 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import {
   PROVINCES,
   initials,
-  isRegistered,
   useProfile,
   validPhone,
 } from '@/domain/profile'
@@ -66,7 +65,6 @@ export default function ProfilePage() {
     province: p.province,
     phone: p.phone,
   })
-  const [consent, setConsent] = useState(p.consent)
   const [error, setError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [confirmClear, setConfirmClear] = useState(false)
@@ -80,31 +78,22 @@ export default function ProfilePage() {
     void getStorageInfo().then(setStorage)
   }, [])
 
-  const registered = isRegistered(p)
   const linked = !!p.lineUserId
   // Only offer the LINE button where it can actually help: configured, and
   // either already signed in or in a browser where the redirect can complete.
   const canOfferLine = liffConfigured() && !linked && !isInLineApp() && !isLineLoggedIn()
 
   function save() {
-    if (!consent) return setError(t('profile.mustConsent'))
     if (!draft.name.trim() || !draft.province) return setError(t('profile.mustFill'))
-    // signed in with LINE, the userId is the identity — a phone is a bonus
     if (!linked && !validPhone(draft.phone)) return setError(t('profile.phoneInvalid'))
     if (linked && draft.phone && !validPhone(draft.phone))
       return setError(t('profile.phoneInvalid'))
     setError(null)
-    p.set({
-      ...draft,
-      onboarded: true,
-      consent: true,
-      consentAt: p.consentAt ?? Date.now(),
-    })
+    // consent was given at registration and is not re-asked here; editing a
+    // name must never look like a fresh consent event
+    p.set(draft)
     setSaved(true)
-    setTimeout(() => {
-      setSaved(false)
-      if (!registered) nav('/home')
-    }, 900)
+    setTimeout(() => setSaved(false), 1400)
   }
 
   async function protect() {
@@ -114,14 +103,12 @@ export default function ProfilePage() {
 
   return (
     <div className="px-5 pt-4 pb-8">
-      {isRegistered(p) && (
-        <button
+      <button
           onClick={() => nav('/home')}
           className="press -ml-2 mb-2 flex items-center gap-1 p-2 text-[14px] font-medium text-muted"
         >
           <ChevronLeft size={18} /> {t('common.back')}
-        </button>
-      )}
+      </button>
 
       <div className="flex items-center gap-4">
         {p.linePicture ? (
@@ -139,9 +126,7 @@ export default function ProfilePage() {
           <h1 className="truncate text-[24px] font-bold tracking-tight">
             {draft.name || draft.orchard || t('profile.title')}
           </h1>
-          <p className="text-[13px] text-muted">
-            {isRegistered(p) ? t('profile.subtitle') : t('profile.registerBody')}
-          </p>
+          <p className="text-[13px] text-muted">{t('profile.subtitle')}</p>
         </div>
       </div>
 
@@ -208,38 +193,19 @@ export default function ProfilePage() {
           onChange={(v) => setDraft({ ...draft, phone: v })}
         />
 
-        <div className="rounded-2xl bg-panel p-4">
-          <p className="text-[12px] font-semibold tracking-[0.06em] text-muted uppercase">
-            {t('profile.consentTitle')}
-          </p>
-          <p className="mt-2 text-[13px] leading-relaxed">{t('profile.consentBody')}</p>
-          <p className="mt-2 text-[12px] leading-relaxed text-muted">
-            {t('profile.consentDetail')}{' '}
-            <button
-              onClick={() => nav('/privacy')}
-              className="font-semibold text-accent underline"
-            >
-              {t('profile.privacyLink')}
-            </button>
-          </p>
-          <label className="mt-3 flex items-start gap-3">
-            <input
-              type="checkbox"
-              checked={consent}
-              onChange={(e) => setConsent(e.target.checked)}
-              className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-accent)]"
-            />
-            <span className="text-[14px] font-semibold">{t('profile.consentAccept')}</span>
-          </label>
-        </div>
-
         {error && <Notice tone="warn">{error}</Notice>}
 
         <Button onClick={save}>
           {saved ? <Check size={19} /> : null}
-          {saved ? t('profile.saved') : registered ? t('profile.save') : t('profile.registerCta')}
+          {saved ? t('profile.saved') : t('profile.save')}
         </Button>
       </div>
+
+      {p.growerId && (
+        <p className="num mt-3 px-1 text-[12px] text-muted">
+          {t('profile.growerId')}: {p.growerId}
+        </p>
+      )}
 
       <Section title={t('profile.stats')}>
         <div className="card grid grid-cols-2 gap-4 p-5">

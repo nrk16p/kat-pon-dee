@@ -185,7 +185,7 @@
     "clearConfirm": "Clear profile?",
     "clearBody": "Name, orchard, province and phone will be removed. Measurement history is kept.",
     "required": "Required",
-    "registerTitle": "Register before you start",
+    "registerTitle": "Register to get started",
     "registerBody": "One-time details, used to attribute measurements and to contact you if something goes wrong",
     "consentTitle": "Data collection consent",
     "consentBody": "I consent to my name, phone number, province and fruit photos being stored to measure, grade, and improve the accuracy of this system.",
@@ -203,6 +203,7 @@
     "lineConnected": "Connected with LINE",
     "lineLogin": "Sign in with LINE",
     "lineHint": "Sign in with LINE and skip typing your name and phone",
-    "phoneOptional": "Phone (optional — you are signed in with LINE)"
+    "phoneOptional": "Phone (optional — you are signed in with LINE)",
+    "growerId": "Grower ID"
   }
 }
