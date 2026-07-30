@@ -90,3 +90,58 @@ class GrowerOut(BaseModel):
 class ErrorResponse(BaseModel):
     detail: str
     hint: str | None = None
+
+
+# ---------------------------------------------------------------- counting mode
+
+
+class ZoneOut(BaseModel):
+    """A lane on the printed sheet, in mat millimetres.
+
+    Served rather than hardcoded in the client so the boundary the app draws and
+    the boundary the tracker counts on are the same number.
+    """
+
+    key: str = Field(description="entry_top | entry_left | work | exit_right")
+    x0: float
+    y0: float
+    x1: float
+    y1: float
+
+
+class SessionIn(BaseModel):
+    fruitId: str = "longan"
+    matId: str = "full"
+    growerId: str = ""
+    note: str = ""
+
+
+class SessionOut(BaseModel):
+    sessionId: str
+    startedAt: str
+    closedAt: str = ""
+    fruitId: str
+    matId: str
+    zones: list[ZoneOut] = Field(default_factory=list)
+    counted: int = 0
+    tally: dict[str, int] = Field(default_factory=dict)
+    meanDiameter: float = 0.0
+    minDiameter: float = 0.0
+    maxDiameter: float = 0.0
+
+
+class CountedIn(BaseModel):
+    tid: int = Field(description="tracker id, unique within the session")
+    d: float = 0.0
+    grade: str = "?"
+    x: float = 0.0
+    y: float = 0.0
+    borderline: bool = False
+
+
+class CountIn(BaseModel):
+    fruits: list[CountedIn] = Field(default_factory=list)
+
+
+class UncountIn(BaseModel):
+    tids: list[int] = Field(default_factory=list)

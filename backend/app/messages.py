@@ -148,6 +148,55 @@ MESSAGES: dict[str, dict[str, str]] = {
             "read high by roughly 0.4-1.1 mm"
         ),
     },
+    # -------------------------------------------------- counting session ----
+    "MAT_TOO_SMALL_FOR_ZONES": {
+        TH: (
+            "แผ่น “{mat_id}” เล็กเกินไปสำหรับโหมดนับ พื้นที่วัด {area} มม. "
+            "หักช่องวางและช่องออกแล้วเหลือ {work} มม. ต้องมีอย่างน้อย {min_work} มม. "
+            "— ใช้แผ่น 500 มม."
+        ),
+        EN: (
+            "sheet “{mat_id}” is too small for counting mode: a {area} mm area "
+            "leaves {work} mm of work zone, and {min_work} mm is the minimum. "
+            "Use the 500 mm sheet."
+        ),
+    },
+    "SESSION_NOT_FOUND": {
+        TH: "ไม่พบรอบนับนี้",
+        EN: "no such counting session",
+    },
+    "SESSION_CLOSED": {
+        TH: "รอบนับนี้ปิดแล้ว เปิดรอบใหม่เพื่อนับต่อ",
+        EN: "this session is closed — open a new one to keep counting",
+    },
+    "SESSION_TOO_LONG": {
+        TH: "รอบนับนี้ยาวเกิน {max} รายการ กรุณาปิดแล้วเปิดรอบใหม่",
+        EN: "session exceeded {max} events — close it and open a new one",
+    },
+    "SESSION_WRITE_FAILED": {
+        # the count IS the product here, so unlike a dropped photo this must be
+        # visible: a tally the server did not record is a tally nobody can defend
+        TH: "บันทึกยอดนับไม่สำเร็จ ({err}) ยอดบนหน้าจออาจไม่ตรงกับที่บันทึกไว้",
+        EN: "could not record the count ({err}) — the on-screen tally may not match what is stored",
+    },
+    "SESSION_READ_FAILED": {
+        TH: "อ่านรอบนับไม่สำเร็จ ({err})",
+        EN: "could not read the session ({err})",
+    },
+    "UNAUTHORIZED": {
+        TH: "ไม่ได้รับอนุญาตให้เข้าถึงเซิร์ฟเวอร์นี้",
+        EN: "not authorised for this server",
+    },
+    "WARN_LIVE_PRECISION": {
+        TH: (
+            "โหมดสดวัดหยาบกว่าการถ่ายนิ่ง (คลาดประมาณ ±{mm} มม.) "
+            "ใช้ช่วยคัดได้ แต่ถ้าจะใช้เป็นหลักฐานให้ถ่ายนิ่งอีกครั้ง"
+        ),
+        EN: (
+            "live mode is coarser than a still capture (about ±{mm} mm). Fine for "
+            "sorting; take a still capture for anything you hand to a buyer."
+        ),
+    },
 }
 
 

@@ -30,6 +30,11 @@ services:
         value: /data/failed
       - key: GROWERS_FILE
         value: /data/growers.jsonl
+      # Counting tallies. On the disk for the same reason as everything else,
+      # but this one is worse to lose: the farmer already read the number off
+      # the screen and believes it.
+      - key: SESSION_DIR
+        value: /data/sessions
       - key: RETAIN_CAPTURES
         value: '1'
       # One capture peaks near 0.5 GB; two at once would OOM anything small.
@@ -39,5 +44,14 @@ services:
       # (peak 339 MB) and accept -0.17 mm.
       - key: RECT_PX_PER_MM
         value: '8.0'
+      # Live counting frames. NOT the same as RECT_PX_PER_MM: at preview
+      # resolution 8 px/mm upsamples past the information actually in the frame,
+      # reads +0.4 mm high, and costs 10x the time for it.
+      - key: LIVE_PX_PER_MM
+        value: '2.5'
       - key: CORS_ORIGINS
         sync: false            # set to the Vercel URL in the dashboard
+      # Shared secret for the write endpoints. Set it before any tunnel or
+      # public URL exists, or anyone holding the address can fill the disk.
+      - key: API_TOKEN
+        sync: false

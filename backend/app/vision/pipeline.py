@@ -26,11 +26,18 @@ from .optics import Intrinsics, intrinsics_from_exif, solve_true_diameter
 from .segment import Detection, SegmentParams, segment
 
 # Rectified sheet resolution. Drives both accuracy and peak memory:
-#   8 px/mm -> 482 MB peak, bias -0.05 mm
-#   5 px/mm -> 339 MB peak, bias -0.17 mm
+#   8   px/mm -> 482 MB peak, bias -0.05 mm
+#   5   px/mm -> 339 MB peak, bias -0.17 mm
+#   2.5 px/mm -> ~190 ms/frame, bias +0.43 mm
 # 8 is the default because the accuracy is the point; drop it only to fit a
 # small instance, and know what it costs.
 RECT_PX_PER_MM = float(os.getenv("RECT_PX_PER_MM", "8.0"))
+
+# Live counting trades accuracy for latency: a farmer waiting 18 s per handful
+# would never finish a basket. +0.43 mm still separates grades that sit 3 mm
+# apart, and anything within half a millimetre of a boundary is reported as
+# borderline rather than guessed.
+LIVE_PX_PER_MM = float(os.getenv("LIVE_PX_PER_MM", "2.5"))
 
 
 @dataclass
@@ -76,6 +83,7 @@ def measure_image(
     params: SegmentParams,
     equiv35mm: float | None = None,
     intrinsics: Intrinsics | None = None,
+    px_per_mm: float | None = None,
 ) -> PipelineResult:
     t0 = time.perf_counter()
     warnings: list[tuple[str, dict]] = []
@@ -96,7 +104,7 @@ def measure_image(
     if fix.sharpness < 1.0:
         warnings.append(("WARN_BLURRY", {"score": fix.sharpness}))
 
-    rect, px_per_mm = rectify(bgr, mat, fix, RECT_PX_PER_MM)
+    rect, px_per_mm = rectify(bgr, mat, fix, px_per_mm or RECT_PX_PER_MM)
 
     # colour is meaningless without the printed reference: the same fruit at noon
     # and at dusk gives completely different RGB
