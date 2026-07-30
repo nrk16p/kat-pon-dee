@@ -8,6 +8,7 @@ import ErrorScreen from './components/ErrorScreen'
 import LandingPage from './features/LandingPage'
 import HomePage from './features/HomePage'
 import CapturePage from './features/CapturePage'
+import CountPage from './features/CountPage'
 import ResultPage from './features/ResultPage'
 import HistoryPage from './features/HistoryPage'
 import PrivacyPage from './features/PrivacyPage'
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/home', element: <HomePage /> },
       { path: '/capture', element: <CapturePage /> },
+      { path: '/count', element: <CountPage /> },
       { path: '/result', element: <ResultPage /> },
       { path: '/history', element: <HistoryPage /> },
       { path: '/register', element: <RegisterPage /> },

@@ -46,6 +46,44 @@ export function isOverridden(): boolean {
   }
 }
 
+/* ----------------------------------------------------------------- token -- */
+
+/**
+ * Shared secret for the write endpoints.
+ *
+ * A Cloudflare tunnel puts the laptop on the public internet. Without this,
+ * anyone who ends up with the URL can upload, fill the disk, and pollute the
+ * training set — and the training set is the one thing in this project that
+ * cannot be regenerated out of season.
+ */
+const TOKEN_KEY = 'kpd-api-token'
+const BUILD_TOKEN: string = import.meta.env.VITE_API_TOKEN ?? ''
+
+export function getApiToken(): string {
+  try {
+    return localStorage.getItem(TOKEN_KEY) || BUILD_TOKEN
+  } catch {
+    return BUILD_TOKEN
+  }
+}
+
+export function setApiToken(raw: string): string {
+  const t = raw.trim()
+  try {
+    if (t) localStorage.setItem(TOKEN_KEY, t)
+    else localStorage.removeItem(TOKEN_KEY)
+  } catch {
+    /* private browsing — the build default still applies */
+  }
+  return t
+}
+
+/** Auth headers, or nothing when the server is running open (localhost dev). */
+export function authHeaders(): Record<string, string> {
+  const t = getApiToken()
+  return t ? { 'X-API-Token': t } : {}
+}
+
 export interface HealthReport {
   ok: boolean
   detail: string

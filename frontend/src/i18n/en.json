@@ -8,7 +8,8 @@
     "history": "History",
     "settings": "Settings",
     "home": "Home",
-    "profile": "Profile"
+    "profile": "Profile",
+    "count": "Count"
   },
   "capture": {
     "title": "Measure and grade",
@@ -216,5 +217,35 @@
     "lineHint": "Sign in with LINE and skip typing your name and phone",
     "phoneOptional": "Phone (optional — you are signed in with LINE)",
     "growerId": "Grower ID"
+  },
+  "count": {
+    "title": "Count and grade",
+    "short": "Count",
+    "start": "Start counting",
+    "starting": "Starting…",
+    "finish": "Finish",
+    "counted": "Counted",
+    "onSheet": "On sheet",
+    "mean": "Mean",
+    "undo": "Undo last fruit",
+    "undone": "Undid {{n}} fruit",
+    "sound": "Sound",
+    "markers": "Markers {{found}}/4",
+    "motionMoving": "Waiting for still…",
+    "motionSettling": "Settling…",
+    "motionStill": "Still",
+    "reading": "Reading…",
+    "borderline": "Borderline",
+    "borderlineHelp": "Too close to a grade boundary to call — take a still capture",
+    "needFullMat": "Counting mode needs the 500 mm sheet",
+    "needFullMatWhy": "A3 and A4 leave too little work zone once the lanes are taken out",
+    "noServer": "Counting mode needs a server; none is configured",
+    "cameraDenied": "Camera permission denied — allow it in the browser settings",
+    "cameraFailed": "Could not open the camera",
+    "howTo": "Place fruit from the left or top lane, let go, then sweep right",
+    "liveNote": "Live mode is coarser than a still capture. Fine for sorting; take a still capture for a buyer.",
+    "countedOnExit": "Counted when a fruit leaves the work zone — undo if it over-counts",
+    "empty": "Nothing counted yet",
+    "summary": "Session summary"
   }
 }

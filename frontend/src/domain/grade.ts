@@ -47,6 +47,29 @@ export function isPlausible(fruit: FruitProfile, diameterMm: number): boolean {
   return diameterMm >= fruit.size.min && diameterMm <= fruit.size.max
 }
 
+/**
+ * How far a fruit sits from the nearest grade boundary, in mm.
+ *
+ * Live counting measures to about ±0.3 mm. Grade bands are 3 mm apart, so
+ * almost every fruit is decided well clear of that — but the few sitting on a
+ * boundary are exactly the ones a buyer will re-measure, and a confident wrong
+ * answer there costs more than an honest "not sure".
+ */
+export function distanceToBoundary(fruit: FruitProfile, diameterMm: number): number {
+  const edges = fruit.grading.rules.map((r) => r.minDiameter)
+  return Math.min(...edges.map((e) => Math.abs(diameterMm - e)))
+}
+
+/** Within one live measurement's error of a grade boundary — show it, do not
+ *  guess it. Same rule as occlusion: counted, but not graded. */
+export function isBorderline(
+  fruit: FruitProfile,
+  diameterMm: number,
+  toleranceMm = 0.3,
+): boolean {
+  return distanceToBoundary(fruit, diameterMm) < toleranceMm
+}
+
 export function mean(xs: number[]): number {
   return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0
 }

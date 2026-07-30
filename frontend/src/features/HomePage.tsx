@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Camera, ChevronRight, UserRound } from 'lucide-react'
+import { Camera, ChevronRight, ListChecks, UserRound } from 'lucide-react'
 import { Section, Stat, useT } from '@/components/ui'
 import { db } from '@/lib/db'
 import { getFruit } from '@/domain/fruits'
 import { MATS } from '@/domain/mats'
 import { initials, hasProfile, useProfile } from '@/domain/profile'
+import { supportsCounting } from '@/domain/zones'
 import { useApp } from '@/store/app'
 
 export default function HomePage() {
@@ -86,6 +87,25 @@ export default function HomePage() {
         </span>
         <ChevronRight size={22} className="shrink-0 opacity-80" />
       </button>
+
+      {/* Counting is a different job from measuring, not a mode of it: one
+          samples a sheet, the other walks a whole basket through. Only offered
+          on the 500 mm sheet, which is the only one with room for the lanes. */}
+      {supportsCounting(mat) && (
+        <button
+          onClick={() => nav('/count')}
+          className="press card mt-3 flex w-full items-center gap-4 p-5 text-left"
+        >
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-accent-soft text-accent-ink">
+            <ListChecks size={22} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[16px] font-bold">{t('count.title')}</span>
+            <span className="block text-[13px] text-muted">{t('count.howTo')}</span>
+          </span>
+          <ChevronRight size={20} className="shrink-0 text-muted" />
+        </button>
+      )}
 
       <div className="card mt-4 grid grid-cols-3 gap-3 p-5">
         <Stat label={t('home.sessions')} value={sessions} />
