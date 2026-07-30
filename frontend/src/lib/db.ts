@@ -1,9 +1,14 @@
 import Dexie, { type Table } from 'dexie'
 import type { Capture } from '@/domain/types'
 
-/** Captures live in IndexedDB first and sync when there is signal. In an orchard
- *  that is the normal case, not the edge case, so nothing is lost on a failed
- *  upload — the blob stays until the server confirms. */
+/** Local history of measurements.
+ *
+ *  NOT an upload queue. The photo is sent during measurement, so by the time a
+ *  record lands here the server already has it — an earlier version marked these
+ *  "waiting to send" and showed a sync button that sent nothing.
+ *
+ *  The copy kept here is what makes history and the detection overlay work
+ *  without re-fetching, and it is what survives if the server loses the original. */
 class AppDb extends Dexie {
   captures!: Table<Capture, number>
 
@@ -31,10 +36,6 @@ export async function setStatus(
 
 export function recentCaptures(limit = 100) {
   return db.captures.orderBy('createdAt').reverse().limit(limit).toArray()
-}
-
-export function pendingCaptures() {
-  return db.captures.where('status').anyOf('queued', 'failed').toArray()
 }
 
 export async function deleteCapture(id: number): Promise<void> {

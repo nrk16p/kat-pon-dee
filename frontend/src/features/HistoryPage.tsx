@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { Trash2 } from 'lucide-react'
 import { clsx } from 'clsx'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import { Notice, Section, useT } from '@/components/ui'
+import { Section, useT } from '@/components/ui'
 import { db, deleteCapture } from '@/lib/db'
 import { getFruit } from '@/domain/fruits'
 import { MATS } from '@/domain/mats'
@@ -23,7 +23,6 @@ export default function HistoryPage() {
     [],
   )
   const [pendingDelete, setPendingDelete] = useState<number | null>(null)
-  const pending = items?.filter((c) => c.status === 'queued' || c.status === 'failed').length ?? 0
 
   const fmt = new Intl.DateTimeFormat(locale === 'th' ? 'th-TH' : 'en-GB', {
     dateStyle: 'medium',
@@ -33,12 +32,6 @@ export default function HistoryPage() {
   return (
     <div className="px-5 pt-5 pb-8">
       <h1 className="text-[26px] font-bold tracking-tight">{t('history.title')}</h1>
-
-      {pending > 0 && (
-        <div className="mt-4">
-          <Notice>{t('history.pending', { n: pending })}</Notice>
-        </div>
-      )}
 
       {items && items.length === 0 && (
         <div className="card mt-6 p-8 text-center">
@@ -87,14 +80,16 @@ export default function HistoryPage() {
                       {t('common.fruitUnit')} · {mat.sheet}
                     </div>
                   </div>
-                  <span
-                    className={clsx(
-                      'shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold',
-                      STATUS_TONE[c.status],
-                    )}
-                  >
-                    {t(`history.status.${c.status}`)}
-                  </span>
+                  {c.status === 'failed' && (
+                    <span
+                      className={clsx(
+                        'shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold',
+                        STATUS_TONE[c.status],
+                      )}
+                    >
+                      {t(`history.status.${c.status}`)}
+                    </span>
+                  )}
                   <button
                     onClick={() => c.id && setPendingDelete(c.id)}
                     aria-label={t('history.delete')}

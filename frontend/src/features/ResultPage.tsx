@@ -40,7 +40,9 @@ export default function ResultPage() {
       fruitId: result.fruitId,
       matId: result.matId,
       blob: image,
-      status: 'queued',
+      // the photo was uploaded during measurement, so there is nothing left to
+      // send — marking it 'queued' claimed work that never existed
+      status: 'done',
       result,
     })
     setSaved(true)
