@@ -3,7 +3,11 @@ backend/.venv/
 __pycache__/
 *.pyc
 .pytest_cache/
-backend/data/            # captures & failed frames — never commit fruit photos
+# captures, failed frames and grower records — never commit fruit photos or
+# farmer names. A trailing comment would become part of the pattern, so these
+# stay on their own lines.
+backend/data/
+data-backup/
 backend/synthetic.jpg
 
 # node
