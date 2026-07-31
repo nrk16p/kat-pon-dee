@@ -6,20 +6,48 @@
 # it leaves the page — pointing the app at the LAN address simply does not work,
 # however fast that route would be.
 #
-#   ./tunnel.sh                  quick tunnel, throwaway URL, no account
-#   ./tunnel.sh kat-pon-dee.example.com    named tunnel, stable URL
+#   ./tunnel.sh                    ngrok on NGROK_DOMAIN if set, else quick tunnel
+#   ./tunnel.sh kpd.example.com    cloudflare named tunnel
 #
-# Prefer the named tunnel. A quick tunnel mints a new hostname on every restart,
-# which means re-entering the endpoint on every phone each morning.
+# A stable hostname is worth more than it sounds. A quick tunnel mints a new one
+# on every restart, so every phone in the orchard has to be re-pointed each
+# morning — and the restart usually happens when someone is already standing
+# over a basket.
 #
-# One-time setup for a named tunnel (needs a domain on Cloudflare):
+# ngrok is the cheap way to a stable name: a free account includes one reserved
+# domain, no domain purchase, no DNS. Its free tier allows a single agent at a
+# time, so this and any other project's tunnel take turns.
+#
+#   ngrok config add-authtoken <token>       # https://dashboard.ngrok.com
+#   NGROK_DOMAIN=<reserved-domain> ./tunnel.sh
+#
+# Cloudflare is the better long-term answer if you own a domain — no session
+# limit, no shared account to contend with:
 #   cloudflared tunnel login
 #   cloudflared tunnel create kat-pon-dee
-#   cloudflared tunnel route dns kat-pon-dee kat-pon-dee.example.com
+#   cloudflared tunnel route dns kat-pon-dee kpd.example.com
 set -euo pipefail
+cd "$(dirname "$0")"
 
 PORT="${PORT:-8000}"
 HOSTNAME_ARG="${1:-}"
+
+# .env is optional and only read for NGROK_DOMAIN, so the reserved name lives
+# next to the code rather than in someone's shell history.
+if [[ -z "${NGROK_DOMAIN:-}" && -f .env ]]; then
+  NGROK_DOMAIN="$(grep -E '^NGROK_DOMAIN=' .env | tail -1 | cut -d= -f2- || true)"
+fi
+
+if [[ -z "$HOSTNAME_ARG" && -n "${NGROK_DOMAIN:-}" ]]; then
+  command -v ngrok >/dev/null || {
+    echo "ngrok not installed:  brew install ngrok/ngrok/ngrok" >&2
+    exit 1
+  }
+  echo "ngrok — stable URL:  https://$NGROK_DOMAIN"
+  echo
+  # --url, not the older --domain, which ngrok now warns is deprecated.
+  exec ngrok http "$PORT" --url="https://$NGROK_DOMAIN" --log=stdout
+fi
 
 command -v cloudflared >/dev/null || {
   echo "cloudflared not installed:  brew install cloudflared" >&2

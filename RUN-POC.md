@@ -33,16 +33,27 @@ curl -s localhost:8000/api/health | python3 -m json.tool | grep persisting
 **ต้องใช้ HTTPS** หน้าเว็บอยู่บน Vercel ผ่าน TLS ยิงไปที่ `http://192.168.x.x`
 เบราว์เซอร์บล็อกทิ้งเป็น mixed content — ต่อ LAN ตรง ๆ ไม่ได้ ไม่ว่าจะเร็วแค่ไหน
 
-### แบบเร็ว (URL เปลี่ยนทุกครั้งที่รีสตาร์ต)
+### ที่ใช้อยู่ — ngrok, URL คงที่ ไม่ต้องซื้อโดเมน
 
 ```bash
 cd "AI Smart Fruit Grading/backend"
-./tunnel.sh
+PORT=8010 ./tunnel.sh
 ```
 
-### แบบถาวร (แนะนำ — ต้องมีโดเมนบน Cloudflare)
+ได้ `https://oilless-superurgently-mafalda.ngrok-free.dev` **ทุกครั้ง** ไม่เปลี่ยน
+สคริปต์อ่านชื่อโดเมนจาก `backend/.env` ซึ่งไม่ได้อยู่ใน git — เครื่องใหม่ต้องใส่เอง:
 
-ทำครั้งเดียว **ต้องรันเองเพราะเปิดเบราว์เซอร์ให้ล็อกอิน**
+```
+NGROK_DOMAIN=<โดเมนที่จองไว้>
+```
+
+⚠️ **บัญชีฟรีให้ agent ทีละตัว** โดเมนนี้ใช้ร่วมกับ ai-agent-server ใครเปิดทีหลังได้ไป
+ถ้าจะรันพร้อมกันต้องอัปเกรด หรือให้ตัวใดตัวหนึ่งไปใช้ Cloudflare แทน
+
+### ทางเลือก — Cloudflare (ต้องมีโดเมนของตัวเอง)
+
+ไม่จำกัดจำนวน agent เหมาะกว่าถ้าจะใช้ยาวทั้งฤดู ทำครั้งเดียว
+**ต้องรันเองเพราะเปิดเบราว์เซอร์ให้ล็อกอิน**
 
 ```
 ! cloudflared tunnel login
@@ -53,8 +64,14 @@ cd "AI Smart Fruit Grading/backend"
 จากนั้นทุกครั้ง:
 
 ```bash
-./tunnel.sh kpd.your-domain.com
+PORT=8010 ./tunnel.sh kpd.your-domain.com
 ```
+
+### ทางที่ควรเลี่ยง — quick tunnel
+
+ถ้าไม่ตั้ง `NGROK_DOMAIN` และไม่ใส่ชื่อโดเมน สคริปต์จะถอยไปใช้ Cloudflare quick
+tunnel ซึ่ง**เปลี่ยน URL ทุกครั้งที่รีสตาร์ต** ต้องไปกรอกใหม่ในมือถือทุกเครื่อง
+และการรีสตาร์ตมักเกิดตอนยืนอยู่หน้าตะกร้าพอดี
 
 ---
 
@@ -68,7 +85,8 @@ cd "AI Smart Fruit Grading/backend"
 | API token | token จากขั้นที่ 1 |
 
 หรือใส่ใน Vercel เป็น `VITE_API_URL` และ `VITE_API_TOKEN` แล้ว redeploy
-ถ้าใช้ quick tunnel อย่าใส่ใน Vercel — URL เปลี่ยนทุกวัน ใส่ในแอปสะดวกกว่า
+ตอนนี้ URL คงที่แล้วจึงใส่ใน Vercel ได้ ไม่ต้องกรอกทีละเครื่อง
+**ยกเว้นถ้าถอยไปใช้ quick tunnel** — URL เปลี่ยนทุกวัน ใส่ในแอปสะดวกกว่า
 
 ---
 
