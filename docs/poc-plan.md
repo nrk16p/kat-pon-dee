@@ -116,7 +116,7 @@ mixed content เบราว์เซอร์บล็อกทิ้ง
 ### ขั้น 0 — หยุดข้อมูลหาย · ครึ่งวัน
 
 - ตั้ง named tunnel ชี้มาที่ Mac
-- ชี้ `VITE_API_BASE` ไปที่ tunnel
+- ชี้ `VITE_API_URL` ไปที่ tunnel (ไม่ใช่ `VITE_API_BASE` — โค้ดอ่านชื่อนี้)
 - ยืนยัน `/api/health` ตอบ `persisting: true`
 - ตั้งสำรอง `data/` อัตโนมัติ
 
@@ -210,7 +210,7 @@ src/features/CountPage.tsx
 Droplet $12/เดือน (2 vCPU · 2GB) + Volume 50GB
    ├── โค้ดชุดเดิม start.sh ชุดเดิม
    ├── rsync data/ จาก Mac ขึ้นไป
-   └── ชี้ VITE_API_BASE ใหม่
+   └── ชี้ VITE_API_URL ใหม่
 ```
 
 **สิ่งที่ต้องรักษาไว้ระหว่าง PoC เพื่อให้ย้ายง่าย:**
